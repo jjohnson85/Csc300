@@ -27,3 +27,10 @@ int height(avl_tree_node *root)
 	//MUHAHAHAHAAHAHAHAHAHAHA
 
 }
+
+int singleRotate(avl_tree_node *root)
+{
+
+	//DIFFERENT TEST
+
+}
