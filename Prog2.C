@@ -21,6 +21,7 @@ int main( int argv, char argc[])
 //Empty for now
 
 }
+<<<<<<< HEAD
 
 int height(avl_tree_node *root)
 {
@@ -34,3 +35,5 @@ int insertAvl( avl_tree_node *root)
 	//TESTING TESTING
 
 }
+=======
+>>>>>>> c686dfe055b6c8d96d5b79f9eca1b313e7f7a5bd
