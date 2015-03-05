@@ -24,6 +24,6 @@ int main( int argv, char argc[])
 
 int height(avl_tree_node *root)
 {
-
+	//MUHAHAHAHAAHAHAHAHAHAHA
 
 }
