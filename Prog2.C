@@ -22,8 +22,8 @@ int main( int argv, char argc[])
 
 }
 
-
-int height(avl_tree_node *n) const
+int height(avl_tree_node *root)
 {
-	return n == t -> height;
+
+
 }
