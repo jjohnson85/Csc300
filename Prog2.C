@@ -29,6 +29,7 @@ int height(avl_tree_node *root)
 
 }
 
+<<<<<<< HEAD
 int insertAvl( avl_tree_node *root)
 {
 
@@ -37,3 +38,11 @@ int insertAvl( avl_tree_node *root)
 }
 =======
 >>>>>>> c686dfe055b6c8d96d5b79f9eca1b313e7f7a5bd
+=======
+int singleRotate(avl_tree_node *root)
+{
+
+	//DIFFERENT TEST
+
+}
+>>>>>>> branch1
