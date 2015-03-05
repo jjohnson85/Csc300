@@ -21,11 +21,3 @@ int main( int argv, char argc[])
 //Empty for now
 
 }
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-int height(avl_tree_node *root)
-{
-	//MUHAHAHAHAAHAHAHAHAHAHA
-
-}
