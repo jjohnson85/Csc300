@@ -22,23 +22,10 @@ int main( int argv, char argc[])
 
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 int height(avl_tree_node *root)
 {
 	//MUHAHAHAHAAHAHAHAHAHAHA
-
-}
-
-int insertAvl( avl_tree_node *root)
-{
-
-	//TESTING TESTING
-	//
-}
-
-int singleRotate(avl_tree_node *root)
-{
-
-	//DIFFERENT TEST
 
 }
