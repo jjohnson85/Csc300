@@ -27,3 +27,10 @@ int height(avl_tree_node *root)
 	//MUHAHAHAHAAHAHAHAHAHAHA
 
 }
+
+int insertAvl( avl_tree_node *root)
+{
+
+	//TESTING TESTING
+
+}
