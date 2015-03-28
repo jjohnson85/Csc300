@@ -3,10 +3,6 @@
 
 using namespace std;
 
-void avl_init( avl_tree_node *root, fstream &binFile, key );
-void insert( avl_tree_node *root, fstream &binFile, key );
-
-
 struct avl_tree_node
 {
 	int key_value; //tree node value
@@ -15,19 +11,22 @@ struct avl_tree_node
 	int height; //height from here down (0 if leaf)
 	int parent; //index of parent (C_NULL if root)
 	int file_loc; //index of this node
-}
+};
 const int C_NULL = -1;
 const int C_NODE_SIZE = sizeof(avl_tree_node);
 
-int main( int argv, char argc[])
+void avl_init( avl_tree_node *root, fstream &binFile, int  key );
+void insert( avl_tree_node *root, fstream &binFile, int key );
+
+int main( int argc, char *argv[])
 {
 	ifstream fin;
 	fstream binFile;
 	avl_tree_node *root;
 	int key;
 
-	fin.open( argc[1] );
-	binFile.open( argc[2], ios::binary, ios::beg )
+	fin.open( argv[1] );
+	binFile.open( argv[2], fstream::binary | fstream::out | fstream::in );
 
 	if ( fin >> key )
 	{
@@ -35,20 +34,22 @@ int main( int argv, char argc[])
 	}
 	else
 	{
-		cerr >>"Error: No values in file" >> endl;
+		cerr << "Error: No values in file" << endl;
 		return -1;
 	}
-
+	/*
 	while( fin >> key )
 	{
 		insert(root, binFile, key);
 
 	}	
+	*/
+	fin.close();
 	return 0;
 }
 
 //Write the root node to the front of the file
-void avl_init( avl_tree_node* root, fstream &binFile, key )
+void avl_init( avl_tree_node* root, fstream &binFile, int  key )
 {
 
 	root->key_value = key;
@@ -58,10 +59,10 @@ void avl_init( avl_tree_node* root, fstream &binFile, key )
 	root->parent = C_NULL;
 	root->file_loc = 1;
 
-	binFile.write(root, C_NODE_SIZE );
-
+	binFile.write((char*)root, C_NODE_SIZE );
+	
 }
-
+/*
 //Check the balance of the tree
 //May not be necessary if height is check when leaving
 //insert recursion
@@ -179,4 +180,4 @@ void doubleRotate( avl_tree_node *root )
 
 }
 
- 
+*/ 
