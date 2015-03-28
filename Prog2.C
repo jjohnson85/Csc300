@@ -16,7 +16,7 @@ const int C_NULL = -1;
 const int C_NODE_SIZE = sizeof(avl_tree_node);
 
 void avl_init( avl_tree_node &root, fstream &binFile, int  key );
-void insert( avl_tree_node &root, fstream &binFile, int key );
+void insert( avl_tree_node &root, fstream &binFile, int &key, int &parent );
 
 int main( int argc, char *argv[])
 {
@@ -27,20 +27,26 @@ int main( int argc, char *argv[])
 	int key;
 
 	fin.open( argv[1] );
-	
+	if(!fin)
+	{
+		cout << "Input file failed to open" << endl;
+		return -1;
+	}
+
 	binFile.open( argv[2], fstream::out);
+\	if(!binFile)
+	{
+		cout << "Output file failed to open" << endl;
+		return -1;
+	}
 	binFile.close();
 
 	binFile.open( argv[2], fstream::out | fstream::in | fstream::binary );
-	
-	if(fin.is_open()== true)
+	if(!binFIle)
 	{
-		cout << "Helo Worl" << endl;
-	}
-	if(binFile.is_open()== true)
-	{
-		cout << "Hello World" << endl;
-	}
+		cout << "Output file failed to open" << endl;
+		return -1;
+	}	
 	
 	if ( fin >> key )
 	{
@@ -55,13 +61,13 @@ int main( int argc, char *argv[])
 		cerr << "Error: No values in file" << endl;
 		return -1;
 	}
-	/*
+	
 	while( fin >> key )
 	{
 		insert(root, binFile, key);
 
 	}	
-	*/
+	
 	binFile.close();
 	fin.close();
 	return 0;
@@ -125,39 +131,43 @@ bool balance( avl_tree_node* root, fstream &binFile )
 	}
 
 }
-
+*/
 //Recursively write node records to the binary file
-void insert( avl_tree_node *root, fstream &binFile, key )
+void insert( avl_tree_node &root, fstream &binFile, int &key, int &parent )
 {	
 	//Case if left is empty and key fits in left
-	if( root->left == C_NULL && root->key_value < key )
+	if( root.left_child == C_NULL && root.key_value > key )
 	{
 		//Write the new node to the binary file with new location	
-		root	
+		
 	}
 	//Case if right is empty and key fits in right
-	else if( root->right == C_NULL && root->key_value > key)
+	else if( root.right_child == C_NULL && root.key_value < key)
 	{
 		//Write the new node to the binary file with new location
 	
 	}
 	//Case if left is filled and key moves left
-	else if( root-> key_value > key )
+	else if( root.key_value > key )
 	{
 		//New root is to the left, read root->left location
 		//into current root value
-		
+		parent = root.file_loc;
+		binFile.seekg(C_NODE_SIZE*root.left_child, ios::beg);
+		binFile.read((char*)&root, C_NODE_SIZE);
 
-		insert(root, binFile, key);
+		insert(root, binFile, key, parent);
 	}
 	//Case if right is filled and key moves right
-	else if( root-> key_value < key)
+	else if( root.key_value < key)
 	{
 		//New root is to the right, read root->right location
-		//into current root value		
-		
-		
-		insert(root, binFile, key);
+		//into current root value
+		parent = root.file_loc;		
+		binFile.seekg(C_NODE_SIZE*root.right_child, ios::beg);	
+		binFile.read((char*)&root, C_NODE_SIZE);
+
+		insert(root, binFile, key, parent);
 	}
 	//If no other case is fulfilled by this point, the key is a repeat
 	//exit with an error message
@@ -166,20 +176,6 @@ void insert( avl_tree_node *root, fstream &binFile, key )
 		cerr >> "Key is a repeat: Quitting" >> endl;
 		return;
 	}
-
-	//At this point we are leaving the recursion begin cheking heights
-	//by reaing in current node and its children, if the node is out of
-	//balance, run the balancing subroutine
-	
-	binFile.seekp(C_NODE_SIZE * root->parent, ios::beg);
-	binFile.read(root, C_NODE_SIZE);	
-	//root is set to parent values and height is incremented
-	//call function checkBalance
-	if( checkBalance(root, binFile) == false )
-	{
-		//rebalance, need to know if single or double rotation
-	}
-
 
 }
 
@@ -199,4 +195,4 @@ void doubleRotate( avl_tree_node *root )
 
 }
 
-*/ 
+ 
