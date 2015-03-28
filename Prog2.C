@@ -15,22 +15,40 @@ struct avl_tree_node
 const int C_NULL = -1;
 const int C_NODE_SIZE = sizeof(avl_tree_node);
 
-void avl_init( avl_tree_node *root, fstream &binFile, int  key );
-void insert( avl_tree_node *root, fstream &binFile, int key );
+void avl_init( avl_tree_node &root, fstream &binFile, int  key );
+void insert( avl_tree_node &root, fstream &binFile, int key );
 
 int main( int argc, char *argv[])
 {
 	ifstream fin;
 	fstream binFile;
-	avl_tree_node *root;
+	avl_tree_node root;
+	avl_tree_node copy;
 	int key;
 
 	fin.open( argv[1] );
-	binFile.open( argv[2], fstream::binary | fstream::out | fstream::in );
+	
+	binFile.open( argv[2], fstream::out);
+	binFile.close();
 
+	binFile.open( argv[2], fstream::out | fstream::in | fstream::binary );
+	
+	if(fin.is_open()== true)
+	{
+		cout << "Helo Worl" << endl;
+	}
+	if(binFile.is_open()== true)
+	{
+		cout << "Hello World" << endl;
+	}
+	
 	if ( fin >> key )
 	{
 		avl_init( root, binFile, key );
+		binFile.seekg(0, ios::beg);
+		binFile.read((char*)&copy, C_NODE_SIZE);
+		cout << copy.key_value << endl;
+		cout << copy.file_loc << endl;
 	}
 	else
 	{
@@ -44,22 +62,23 @@ int main( int argc, char *argv[])
 
 	}	
 	*/
+	binFile.close();
 	fin.close();
 	return 0;
 }
 
 //Write the root node to the front of the file
-void avl_init( avl_tree_node* root, fstream &binFile, int  key )
+void avl_init( avl_tree_node &root, fstream &binFile, int  key )
 {
 
-	root->key_value = key;
-	root->left_child = C_NULL;
-	root->right_child = C_NULL;
-	root->height = 0;
-	root->parent = C_NULL;
-	root->file_loc = 1;
+	root.key_value = key;
+	root.left_child = C_NULL;
+	root.right_child = C_NULL;
+	root.height = 0;
+	root.parent = C_NULL;
+	root.file_loc = 1;
 
-	binFile.write((char*)root, C_NODE_SIZE );
+	binFile.write((char*)&root, C_NODE_SIZE );
 	
 }
 /*
