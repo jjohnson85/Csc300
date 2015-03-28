@@ -41,10 +41,10 @@ int main( int argv, char argc[])
 
 	while( fin >> key )
 	{
-		insert(
+		insert(root, binFile, key);
 
 	}	
-
+	return 0;
 }
 
 //Write the root node to the front of the file
@@ -65,24 +65,39 @@ void avl_init( avl_tree_node* root, fstream &binFile, key )
 //Check the balance of the tree
 //May not be necessary if height is check when leaving
 //insert recursion
-bool checkBalance( avl_tree_node* root, fstream &binFile )
+bool balance( avl_tree_node* root, fstream &binFile )
 {
 	avl_tree_node left;
 	avl_tree_node right;
+	avl_tree_node left_left;
+	avl_tree_node left_right;
+	avl_tree_node right_left;
+	avl_tree_node right_right;
 
 	//read left node 
 	binFile.seekp( C_NODE_SIZE * root->left, ios::beg );
-	binFile.read( (char*)left, C_NODE_SIZE );
+	binFile.read( left, C_NODE_SIZE );
 	
 	//read right node
 	binFile.seekp( C_NODE_SIZE * root->right, ios::beg );
-	binFile.read( (char*)right, C_NODE_SIZE );
+	binFile.read( right, C_NODE_SIZE );
 
 	//Check balance
-	if( left->height - right->height < -1 ||
-	 left->height - right->height >	1 )
+	if( left->height - right->height < -1)
 	{
-		return false;
+		if(left_left->height - left_right->height)
+		{
+
+
+		}
+	}
+	else if( left->height - right->height > 1)
+	{
+		if(right_left->height - right_right->height)
+		{
+
+
+		}	
 	}
 	else
 	{
@@ -98,12 +113,12 @@ void insert( avl_tree_node *root, fstream &binFile, key )
 	if( root->left == C_NULL && root->key_value < key )
 	{
 		//Write the new node to the binary file with new location	
-	
+		root	
 	}
 	//Case if right is empty and key fits in right
 	else if( root->right == C_NULL && root->key_value > key)
 	{
-		//Write the new not to the binary file with new location
+		//Write the new node to the binary file with new location
 	
 	}
 	//Case if left is filled and key moves left
@@ -129,7 +144,7 @@ void insert( avl_tree_node *root, fstream &binFile, key )
 	else
 	{
 		cerr >> "Key is a repeat: Quitting" >> endl;
-		return
+		return;
 	}
 
 	//At this point we are leaving the recursion begin cheking heights
