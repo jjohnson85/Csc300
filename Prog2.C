@@ -16,7 +16,7 @@ const int C_NULL = -1;
 const int C_NODE_SIZE = sizeof(avl_tree_node);
 
 void avl_init( avl_tree_node &root, fstream &binFile, int  key );
-void insert( avl_tree_node &root, fstream &binFile, int &key, int &parent );
+void insert( avl_tree_node &root, fstream &binFile, int &key, int parent, int &location );
 
 int main( int argc, char *argv[])
 {
@@ -24,23 +24,28 @@ int main( int argc, char *argv[])
 	fstream binFile;
 	avl_tree_node root;
 	avl_tree_node copy;
-	int key;
+	int key = C_NULL;
+	int location = C_NULL;
+	int parent = 1;
 
+	//Opent the text file for input
 	fin.open( argv[1] );
 	if(!fin)
 	{
 		cout << "Input file failed to open" << endl;
 		return -1;
 	}
-
+	
+	//Open the output file once to create a new file if no file exists
 	binFile.open( argv[2], fstream::out);
-\	if(!binFile)
+	if(!binFile)
 	{
 		cout << "Output file failed to open" << endl;
 		return -1;
 	}
 	binFile.close();
-
+	
+	//Open the file again this time in binary mode, for input and output
 	binFile.open( argv[2], fstream::out | fstream::in | fstream::binary );
 	if(!binFIle)
 	{
@@ -48,6 +53,7 @@ int main( int argc, char *argv[])
 		return -1;
 	}	
 	
+	//Check for the first key value and initialize the root
 	if ( fin >> key )
 	{
 		avl_init( root, binFile, key );
@@ -62,10 +68,12 @@ int main( int argc, char *argv[])
 		return -1;
 	}
 	
+	//insert values into the AVL tree and increment location in the file
+	//for next write
 	while( fin >> key )
 	{
 		insert(root, binFile, key);
-
+		location++;
 	}	
 	
 	binFile.close();
@@ -133,19 +141,37 @@ bool balance( avl_tree_node* root, fstream &binFile )
 }
 */
 //Recursively write node records to the binary file
-void insert( avl_tree_node &root, fstream &binFile, int &key, int &parent )
+void insert( avl_tree_node &root, fstream &binFile, int &key, int parent, int &location )
 {	
 	//Case if left is empty and key fits in left
 	if( root.left_child == C_NULL && root.key_value > key )
 	{
-		//Write the new node to the binary file with new location	
-		
+		//Write the new node to the binary file with new location left	
+		root.key_value = key;
+		root.left_child = C_NULL;
+		root.right_child = C_NULL;
+		root.height = 0;
+		root.parent = parent;
+		root.file_loc = location;
+
+		binFile.seekg(0, ios::end);
+		binFile.write((char*)&root, C_NODE_SIZE);
+		return;
 	}
 	//Case if right is empty and key fits in right
 	else if( root.right_child == C_NULL && root.key_value < key)
 	{
-		//Write the new node to the binary file with new location
-	
+		//Write the new node to the binary file with new location right
+		root.key_value = key;
+		root.left_child = C_NULL;
+		root.right_child = C_NULL;
+		root.height = 0;
+		root.parent = parent;
+		root.file_loc = location;
+		
+		binFile.seekg(0 , ios::end);
+		binFile.write((char*)&root, C_NODE_SIZE);
+		return;
 	}
 	//Case if left is filled and key moves left
 	else if( root.key_value > key )
@@ -156,7 +182,8 @@ void insert( avl_tree_node &root, fstream &binFile, int &key, int &parent )
 		binFile.seekg(C_NODE_SIZE*root.left_child, ios::beg);
 		binFile.read((char*)&root, C_NODE_SIZE);
 
-		insert(root, binFile, key, parent);
+		insert(root, binFile, key, parent, location);
+
 	}
 	//Case if right is filled and key moves right
 	else if( root.key_value < key)
@@ -167,15 +194,22 @@ void insert( avl_tree_node &root, fstream &binFile, int &key, int &parent )
 		binFile.seekg(C_NODE_SIZE*root.right_child, ios::beg);	
 		binFile.read((char*)&root, C_NODE_SIZE);
 
-		insert(root, binFile, key, parent);
+		insert(root, binFile, key, parent, location);
 	}
 	//If no other case is fulfilled by this point, the key is a repeat
 	//exit with an error message
 	else
 	{
 		cerr >> "Key is a repeat: Quitting" >> endl;
-		return;
+		return -2;
 	}
+
+	//read root value at location parent for access to current
+	//node in the recursion
+	
+	binFile.seekg(C_NODE_SIZE*parent, ios::beg);
+	binFile.read((char*)&root, C_NODE_SIZE);
+	
 
 }
 
