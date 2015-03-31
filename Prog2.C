@@ -47,7 +47,7 @@ int main( int argc, char *argv[])
 	
 	//Open the file again this time in binary mode, for input and output
 	binFile.open( argv[2], fstream::out | fstream::in | fstream::binary );
-	if(!binFIle)
+	if(!binFile)
 	{
 		cout << "Output file failed to open" << endl;
 		return -1;
@@ -57,14 +57,10 @@ int main( int argc, char *argv[])
 	if ( fin >> key )
 	{
 		avl_init( root, binFile, key );
-		binFile.seekg(0, ios::beg);
-		binFile.read((char*)&copy, C_NODE_SIZE);
-		cout << copy.key_value << endl;
-		cout << copy.file_loc << endl;
 	}
 	else
 	{
-		cerr << "Error: No values in file" << endl;
+		cout << "Error: No values in file" << endl;
 		return -1;
 	}
 	
@@ -72,7 +68,7 @@ int main( int argc, char *argv[])
 	//for next write
 	while( fin >> key )
 	{
-		insert(root, binFile, key);
+		insert(root, binFile, key, parent, location);
 		location++;
 	}	
 	
@@ -146,6 +142,11 @@ void insert( avl_tree_node &root, fstream &binFile, int &key, int parent, int &l
 	//Case if left is empty and key fits in left
 	if( root.left_child == C_NULL && root.key_value > key )
 	{
+		//Write the location for new left child to parent
+		root.left_child = location;
+		binFile.seekg(C_NODE_SIZE*root.file_loc, ios::beg);
+		binFile.write((char*)&root, C_NODE_SIZE);
+		
 		//Write the new node to the binary file with new location left	
 		root.key_value = key;
 		root.left_child = C_NULL;
@@ -161,6 +162,11 @@ void insert( avl_tree_node &root, fstream &binFile, int &key, int parent, int &l
 	//Case if right is empty and key fits in right
 	else if( root.right_child == C_NULL && root.key_value < key)
 	{
+		//WRite the location for new right child to parent
+		root.right_child = location;
+		binFile.seekg(C_NODE_SIZE*root.file_loc, ios::beg);
+		binFile.write((char*)&root, C_NODE_SIZE);
+
 		//Write the new node to the binary file with new location right
 		root.key_value = key;
 		root.left_child = C_NULL;
@@ -200,8 +206,8 @@ void insert( avl_tree_node &root, fstream &binFile, int &key, int parent, int &l
 	//exit with an error message
 	else
 	{
-		cerr >> "Key is a repeat: Quitting" >> endl;
-		return -2;
+		cout << key << " :Key is a repeat: Did not insert" << endl;
+		return;
 	}
 
 	//read root value at location parent for access to current
@@ -210,9 +216,13 @@ void insert( avl_tree_node &root, fstream &binFile, int &key, int parent, int &l
 	binFile.seekg(C_NODE_SIZE*parent, ios::beg);
 	binFile.read((char*)&root, C_NODE_SIZE);
 	
-
+	root.height++;
+	cout << parent << " " << root.height << endl;
+	binFile.seekg(C_NODE_SIZE*parent, ios::beg);
+	binFile.write((char*)&root, C_NODE_SIZE);
+	
 }
-
+/*
 //Single rotation for out of balance nodes
 void singleRotate( avl_tree_node *root )
 {
@@ -228,5 +238,5 @@ void doubleRotate( avl_tree_node *root )
 
 
 }
-
+*/
  
