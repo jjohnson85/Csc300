@@ -16,10 +16,12 @@ const int C_NULL = -1;
 const int C_NODE_SIZE = sizeof(avl_tree_node);
 
 void avl_init( avl_tree_node &root, fstream &binFile, int  key );
-void rotateWithLeftChild( avl_tree_node &root);
-void rotateWithRightChild( avl_tree_node &root);
-void doubleWithLeftChild( avl_tree_node &root);
-void doubleWithRightChild( avl_tree_node &root);
+void rotateWithLeftChild( avl_tree_node &root, avl_tree_node &left, avl_tree_node &left_right);
+void rotateWithRightChild( avl_tree_node &root, avl_tree_node &right, avl_tree_node &right_left);
+void doubleWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node &right,
+ avl_tree_node &left_right, avl_tree_node &right_left);
+void doubleWithRightChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node &right,
+ avl_tree_node &left_right, avl_tree_node &right_left);
 void insert( avl_tree_node &root, fstream &binFile, int &key, int parent, int &location );
 int height( avl_tree_node &root, fstream &binFile );
 
@@ -190,21 +192,33 @@ bool balance( avl_tree_node &root, fstream &binFile )
 	}
 	
 	//Check balance
+	//If tree is right heavy
 	if( left.height - right.height < -1)
 	{
-		if(left_left.height - left_right.height)
+		//If right subtree is left heavy
+		if(right_left.height >= right_right.height)
 		{
-
-
+			doubleWithLeftChild(root, right);
+		}
+		//Else if right subtree is right heavy
+		else
+		{
+			rotateWithLeftChild(root, left, left_right);
 		}
 	}
+	//Else if tree is left heavy
 	else if( left.height - right.height > 1)
 	{
-		if(right_left.height - right_right.height)
+		//If left subtree is right heavy
+		if(left_left.height <=  left_right.height)
 		{
-
-
+			doubleWithRightChild(root);
 		}	
+		//Else if left subtree is left heavy
+		else
+		{
+			rotateWithRightChild(root, right, right_left);
+		}
 	}
 	else
 	{
@@ -213,40 +227,29 @@ bool balance( avl_tree_node &root, fstream &binFile )
 
 }
 
-void rotateWithLeftChild(avl_tree_node &root)
+void rotateWithLeftChild(avl_tree_node &root, avl_tree_node &left,
+avl_tree_node &left_right)
 {
 	avl_node_tree temp;
 
 	/*concept, need to use temp and rewrite values in each record
-	left = left_right;
-	left_right = left;
+	root.left_child point to left.right_child;
+	left.right_child point to root;
 	*/
 		
 	//I don't know if this does height correctly since
 	//I didn't change the height like they do in the book
-	temp.key_value = left.key_value;
-	temp.left_child = left.left_child;
-	temp.right_child = left.right_child;
-	temp.height = left.height;
-	temp.parent = left.parent;
-	temp.file_loc = left.file_loc; //Do I need to change this?
-
-	left.key_value = left_right.key_value;
-	left.left_child = left_right.left_child;
-	left.right_child = left_right.right_child;
-	left.height = left_right.height;
-	left.parent = left_right.parent;
-	left.file_loc = left_right.file_loc; //Do I need to change this?
-
-	left_right.key_value = temp.key_value;
-	left_right.left_child = temp.left_child;
-	left_right.right_child = temp.right_child;
-	left_right.height = temp.height;
-	left_right.parent = temp.parent;
-	left_right.file_loc = temp.file_loc; //Do I need to change this?
+	temp.parent = root.parent;
+	
+	root.left_child = left_right.file_loc;
+	left_right.parent = root.file_loc;
+	left.right_child = root.file_loc;
+	root.parent = left.file_loc;
+	left.parent = temp.parent;
 }
 
-void rotateWithRightChild(avl_tree_node &root)
+void rotateWithRightChild(avl_tree_node &root, avl_tree_node &right,
+avl_tree_node &right_left)
 {
 	avl_node_tree temp;
 	
@@ -257,36 +260,25 @@ void rotateWithRightChild(avl_tree_node &root)
 		
 	//I don't know if this does height correctly since
 	//I didn't change the height like they do in the book
-	temp.key_value = right.key_value;
-	temp.left_child = right.left_child;
-	temp.right_child = right.right_child;
-	temp.height = right.height;
-	temp.parent = right.parent;
-	temp.file_loc = right.file_loc; //Do I need to change this?
-
-	right.key_value = right_left.key_value;
-	right.left_child = right_left.left_child;
-	right.right_child = right_left.right_child;
-	right.height = right_left.height;
-	right.parent = right_left.parent;
-	right.file_loc = right_left.file_loc; //Do I need to change this?
-
-	right_left.key_value = temp.key_value;
-	right_left.left_child = temp.left_child;
-	right_left.right_child = temp.right_child;
-	right_left.height = temp.height;
-	right_left.parent = temp.parent;
-	right_left.file_loc = temp.file_loc; //Do I need to change this?
-}
+	temp.parent = root.parent;
+	
+	root.right_child = right_left.file_loc;
+	right_left.parent = root.file_loc;
+	right.left_child = root.file_loc;
+	root.parent = right.file_loc;
+	right.parent = temp.parent;
 }
 
-void doubleWithLeftChild(avl_tree_node &root)
+void doubleWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node &right,
+ avl_tree_node &left_right, avl_tree_node &right_left)
 {
 	rotateWithRightChild(left);
 	rotateWithLeftChild(root);
 }
 
-void doubleWithRightChild(avl_tree_node &root)
+void doubleWithRightChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node &right,
+ avl_tree_node &left_right, avl_tree_node &right_left)
+
 {
 	rotateWithLeftChild(right);
 	rotateWithRightChild(root);
@@ -441,21 +433,3 @@ int height( avl_tree_node &root, fstream &binFile )
 	}	
 
 }
-/*
-//Single rotation for out of balance nodes
-void singleRotate( avl_tree_node *root )
-{
-
-
-
-}
-
-//Double rotation for out of balance nodes
-void doubleRotate( avl_tree_node *root )
-{
-
-
-
-}
-*/
- 
