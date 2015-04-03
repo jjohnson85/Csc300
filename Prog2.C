@@ -16,7 +16,8 @@ const int C_NULL = -1;
 const int C_NODE_SIZE = sizeof(avl_tree_node);
 
 void avl_init( avl_tree_node &root, fstream &binFile, int  key );
-void insert( avl_tree_node &root, fstream &binFile, int &key, int parent, int &location);
+void insert( avl_tree_node &root, fstream &binFile, int &key, int parent, int &location );
+int height( avl_tree_node &root, fstream &binFile );
 
 int main( int argc, char *argv[])
 {
@@ -71,14 +72,16 @@ int main( int argc, char *argv[])
 		binFile.seekg(0, ios::beg);
 		binFile.read((char*)&root, C_NODE_SIZE);
 		cout << "root value is: " << root.key_value << endl;
-		insert(root, binFile, key, parent, location);
+		insert(root, binFile, key, parent, location );
 		location++;
 	}	
 
-	binFile.seekg(0, ios::beg);
+	binFile.seekg(C_NODE_SIZE*0, ios::beg);
 	binFile.read((char*)&root, C_NODE_SIZE);
 	cout << "left_child_loc: " << root.left_child << endl;
-	cout << "right_child_loc: " << root.right_child << endl;	
+	cout << "right_child_loc: " << root.right_child << endl;
+	cout << "height is: " << root.height << endl;
+	cout << "parent is: " << root.parent << endl;	
 	binFile.close();
 	fin.close();
 	return 0;
@@ -153,6 +156,7 @@ void insert( avl_tree_node &root, fstream &binFile, int &key, int parent, int &l
 	//Case if left is empty and key fits in left
 	if( root.left_child == C_NULL && root.key_value > key)
 	{
+		parent = root.file_loc;
 		cout << "Comparing key value to: " << root.key_value << endl;
 		//Write the location for new left child to parent
 		root.left_child = location;
@@ -160,6 +164,7 @@ void insert( avl_tree_node &root, fstream &binFile, int &key, int parent, int &l
 		binFile.write((char*)&root, C_NODE_SIZE);
 		cout << "Insert key value: " << key << " to the left" << endl;
 		cout << "Parent is: " << parent << endl;
+		cout << "Location is: " << location << endl;
 		//Write the new node to the binary file with new location left	
 		root.key_value = key;
 		root.left_child = C_NULL;
@@ -170,18 +175,20 @@ void insert( avl_tree_node &root, fstream &binFile, int &key, int parent, int &l
 
 		binFile.seekp(C_NODE_SIZE*location, ios::beg);
 		binFile.write((char*)&root, C_NODE_SIZE);
-		
-		
+			
 	}	
 	//Case if right is empty and key fits in right
 	else if( root.right_child == C_NULL && root.key_value < key)
 	{
+		parent = root.file_loc;
 		cout << "Comparing key value to: " << root.key_value << endl;
+		//Wite the location for the new right child to parent
 		root.right_child = location;
 		binFile.seekp(C_NODE_SIZE*root.file_loc, ios::beg);
 		binFile.write((char*)&root, C_NODE_SIZE);
 		cout << "Insert key value: " << key << " to the right" << endl;
 		cout << "Parent is: " << parent << endl;
+		cout << "Location is: " << location << endl;
 		//Write the new node to the binary file with new location right
 		root.key_value = key;
 		root.left_child = C_NULL;
@@ -200,11 +207,11 @@ void insert( avl_tree_node &root, fstream &binFile, int &key, int parent, int &l
 		//New root is to the left, read root->left location
 		//into current root value
 		parent = root.file_loc;
+		cout << "Parent value is now: " << root.file_loc << endl;
 		binFile.seekg(C_NODE_SIZE*root.left_child, ios::beg);
 		binFile.read((char*)&root, C_NODE_SIZE);
-		cout << "Move to the left, to position: " << root.left_child << endl;
 		cout << "Key value to the left is: " << root.key_value << endl;
-		insert(root, binFile, key, parent, location);
+		insert(root, binFile, key, parent, location );
 		cout << "It got here" << endl;
 	}
 	//Case if right is filled and key moves right
@@ -212,12 +219,12 @@ void insert( avl_tree_node &root, fstream &binFile, int &key, int parent, int &l
 	{
 		//New root is to the right, read root->right location
 		//into current root value
-		parent = root.file_loc;		
+		parent = root.file_loc;
+		cout << "Parent value is now: " << root.file_loc << endl;		
 		binFile.seekg(C_NODE_SIZE*root.right_child, ios::beg);	
 		binFile.read((char*)&root, C_NODE_SIZE);
-		cout << "Move to the right, to position: " << root.right_child << endl;
 		cout << "Key value to the right is: " << root.key_value << endl;
-		insert(root, binFile, key, parent, location);
+		insert(root, binFile, key, parent, location );
 		cout << "It got here also"<< endl;
 	}
 
@@ -230,17 +237,66 @@ void insert( avl_tree_node &root, fstream &binFile, int &key, int parent, int &l
 	
 	//read root value at location parent for access to current
 	//node in the recursion
-	cout << "Leaving Recursion, parent value is: " << parent << endl;
+	cout << "--------------------------------------------" << endl;
+	cout << "Leaving Recursion, current location is: " << parent << endl;
+
 	if (parent != C_NULL)
 	{	
 	binFile.seekg(C_NODE_SIZE*parent, ios::beg);
 	binFile.read((char*)&root, C_NODE_SIZE);
 	
-	root.height++;
-	cout << parent << " " << root.height << endl;
+	root.height = height(root, binFile)+1;
+
+	cout << "Height at location: " << parent << " is: " << root.height << endl;
 	binFile.seekg(C_NODE_SIZE*parent, ios::beg);
 	binFile.write((char*)&root, C_NODE_SIZE);
 	}	
+}
+
+//Function to update height
+int height( avl_tree_node &root, fstream &binFile )
+{
+	int leftHeight;
+	int rightHeight;
+	
+	//read the heights of both left and right children from parent
+	if( root.left_child != C_NULL)
+	{
+		binFile.seekg(C_NODE_SIZE*root.left_child, ios::beg);
+		binFile.read((char*)&root, C_NODE_SIZE);
+		leftHeight = root.height;
+
+		binFile.seekg(C_NODE_SIZE*root.parent, ios::beg);
+		binFile.read((char*)&root, C_NODE_SIZE);
+	}
+	else
+	{
+		leftHeight = 0;
+	}
+
+	if( root.right_child != C_NULL)
+	{
+		binFile.seekg(C_NODE_SIZE*root.right_child, ios::beg);
+		binFile.read((char*)&root, C_NODE_SIZE);
+		rightHeight = root.height;
+
+		binFile.seekg(C_NODE_SIZE*root.parent, ios::beg);
+		binFile.read((char*)&root, C_NODE_SIZE);
+	}
+	else
+	{
+		rightHeight = 0;
+	}
+
+	if( leftHeight > rightHeight )
+	{
+		return leftHeight;
+	}
+	else
+	{
+		return rightHeight;
+	}	
+
 }
 /*
 //Single rotation for out of balance nodes
