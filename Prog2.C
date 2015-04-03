@@ -16,6 +16,10 @@ const int C_NULL = -1;
 const int C_NODE_SIZE = sizeof(avl_tree_node);
 
 void avl_init( avl_tree_node &root, fstream &binFile, int  key );
+void rotateWithLeftChild( avl_tree_node &root);
+void rotateWithRightChild( avl_tree_node &root);
+void doubleWithLeftChild( avl_tree_node &root);
+void doubleWithRightChild( avl_tree_node &root);
 void insert( avl_tree_node &root, fstream &binFile, int &key, int parent, int &location );
 int height( avl_tree_node &root, fstream &binFile );
 
@@ -104,11 +108,11 @@ void avl_init( avl_tree_node &root, fstream &binFile, int  key )
 		"Left Child: " << root.left_child << endl <<
 		"Right Child: " << root.right_child << endl;
 }
-/*
+
 //Check the balance of the tree
 //May not be necessary if height is check when leaving
 //insert recursion
-bool balance( avl_tree_node* root, fstream &binFile )
+bool balance( avl_tree_node &root, fstream &binFile )
 {
 	avl_tree_node left;
 	avl_tree_node right;
@@ -117,26 +121,86 @@ bool balance( avl_tree_node* root, fstream &binFile )
 	avl_tree_node right_left;
 	avl_tree_node right_right;
 
-	//read left node 
-	binFile.seekp( C_NODE_SIZE * root->left, ios::beg );
-	binFile.read( left, C_NODE_SIZE );
-	
-	//read right node
-	binFile.seekp( C_NODE_SIZE * root->right, ios::beg );
-	binFile.read( right, C_NODE_SIZE );
-
-	//Check balance
-	if( left->height - right->height < -1)
+	//read left node
+	if(root.left != -1)
+	{ 
+		binFile.seekp( C_NODE_SIZE * root.left, ios::beg );
+		binFile.read( left, C_NODE_SIZE );
+	}
+	else
 	{
-		if(left_left->height - left_right->height)
+		left = -1;
+	}
+
+	//read right node
+	if(root.right != -1)
+	{
+		binFile.seekp( C_NODE_SIZE * root.right, ios::beg );
+		binFile.read( right, C_NODE_SIZE );
+	}
+	else
+	{
+		right = -1;
+	}
+	
+	//read children of left node if not null
+	if(left != -1)
+	{
+		if(left.left != -1)
+		{
+			binFile.seekp( C_NODE_SIZE * left.left, ios::beg );
+			binFile.read( left_left, C_NODE_SIZE);
+		}
+		else
+		{
+			left.left = -1;
+		}
+		if(left.right != -1)
+		{
+			binFile.seekp( C_NODE_SIZE * left.right, ios::beg );
+			binFile.read( left_right, C_NODE_SIZE);
+		}
+		else
+		{
+			left.right = -1;
+		}
+	}
+
+	//read children of right node if not null
+	if(right != -1)
+	{
+		if(right.left != -1)
+		{
+			binFile.seekp( C_NODE_SIZE * right.left, ios::beg );
+			binFile.read( right_left, C_NODE_SIZE);
+		}
+		else
+		{
+			right.left = -1;
+		}
+		if(right.right != -1)
+		{
+			binFile.seekp( C_NODE_SIZE * right.right, ios::beg );
+			binFile.read( right_right, C_NODE_SIZE);
+		}
+		else
+		{
+			right.right = -1;
+		}
+	}
+	
+	//Check balance
+	if( left.height - right.height < -1)
+	{
+		if(left_left.height - left_right.height)
 		{
 
 
 		}
 	}
-	else if( left->height - right->height > 1)
+	else if( left.height - right.height > 1)
 	{
-		if(right_left->height - right_right->height)
+		if(right_left.height - right_right.height)
 		{
 
 
@@ -148,7 +212,86 @@ bool balance( avl_tree_node* root, fstream &binFile )
 	}
 
 }
-*/
+
+void rotateWithLeftChild(avl_tree_node &root)
+{
+	avl_node_tree temp;
+
+	/*concept, need to use temp and rewrite values in each record
+	left = left_right;
+	left_right = left;
+	*/
+		
+	//I don't know if this does height correctly since
+	//I didn't change the height like they do in the book
+	temp.key_value = left.key_value;
+	temp.left_child = left.left_child;
+	temp.right_child = left.right_child;
+	temp.height = left.height;
+	temp.parent = left.parent;
+	temp.file_loc = left.file_loc; //Do I need to change this?
+
+	left.key_value = left_right.key_value;
+	left.left_child = left_right.left_child;
+	left.right_child = left_right.right_child;
+	left.height = left_right.height;
+	left.parent = left_right.parent;
+	left.file_loc = left_right.file_loc; //Do I need to change this?
+
+	left_right.key_value = temp.key_value;
+	left_right.left_child = temp.left_child;
+	left_right.right_child = temp.right_child;
+	left_right.height = temp.height;
+	left_right.parent = temp.parent;
+	left_right.file_loc = temp.file_loc; //Do I need to change this?
+}
+
+void rotateWithRightChild(avl_tree_node &root)
+{
+	avl_node_tree temp;
+	
+	/*concept, need to use temp and rewrite values in record
+	right = right_left;
+	right_left = right;	
+	*/
+		
+	//I don't know if this does height correctly since
+	//I didn't change the height like they do in the book
+	temp.key_value = right.key_value;
+	temp.left_child = right.left_child;
+	temp.right_child = right.right_child;
+	temp.height = right.height;
+	temp.parent = right.parent;
+	temp.file_loc = right.file_loc; //Do I need to change this?
+
+	right.key_value = right_left.key_value;
+	right.left_child = right_left.left_child;
+	right.right_child = right_left.right_child;
+	right.height = right_left.height;
+	right.parent = right_left.parent;
+	right.file_loc = right_left.file_loc; //Do I need to change this?
+
+	right_left.key_value = temp.key_value;
+	right_left.left_child = temp.left_child;
+	right_left.right_child = temp.right_child;
+	right_left.height = temp.height;
+	right_left.parent = temp.parent;
+	right_left.file_loc = temp.file_loc; //Do I need to change this?
+}
+}
+
+void doubleWithLeftChild(avl_tree_node &root)
+{
+	rotateWithRightChild(left);
+	rotateWithLeftChild(root);
+}
+
+void doubleWithRightChild(avl_tree_node &root)
+{
+	rotateWithLeftChild(right);
+	rotateWithRightChild(root);
+}
+
 //Recursively write node records to the binary file
 void insert( avl_tree_node &root, fstream &binFile, int &key, int parent, int &location )
 {	
