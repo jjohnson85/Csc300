@@ -124,10 +124,10 @@ bool balance( avl_tree_node &root, fstream &binFile )
 	avl_tree_node right_right;
 
 	//read left node
-	if(root.left != -1)
+	if(root.left_child != -1)
 	{ 
-		binFile.seekp( C_NODE_SIZE * root.left, ios::beg );
-		binFile.read( left, C_NODE_SIZE );
+		binFile.seekp( C_NODE_SIZE * root.left_child, ios::beg );
+		binFile.read((char*)&left, C_NODE_SIZE );
 	}
 	else
 	{
@@ -135,10 +135,10 @@ bool balance( avl_tree_node &root, fstream &binFile )
 	}
 
 	//read right node
-	if(root.right != -1)
+	if(root.right_child != -1)
 	{
-		binFile.seekp( C_NODE_SIZE * root.right, ios::beg );
-		binFile.read( right, C_NODE_SIZE );
+		binFile.seekp( C_NODE_SIZE * root.right_child, ios::beg );
+		binFile.read((char*)&right, C_NODE_SIZE );
 	}
 	else
 	{
@@ -148,46 +148,46 @@ bool balance( avl_tree_node &root, fstream &binFile )
 	//read children of left node if not null
 	if(left != -1)
 	{
-		if(left.left != -1)
+		if(left.left_child != -1)
 		{
-			binFile.seekp( C_NODE_SIZE * left.left, ios::beg );
-			binFile.read( left_left, C_NODE_SIZE);
+			binFile.seekp( C_NODE_SIZE * left.left_child, ios::beg );
+			binFile.read((char*)&left_left, C_NODE_SIZE);
 		}
 		else
 		{
-			left.left = -1;
+			left.left_child = -1;
 		}
-		if(left.right != -1)
+		if(left.right_child != -1)
 		{
-			binFile.seekp( C_NODE_SIZE * left.right, ios::beg );
-			binFile.read( left_right, C_NODE_SIZE);
+			binFile.seekp( C_NODE_SIZE * left.right_child, ios::beg );
+			binFile.read((char*)&left_right, C_NODE_SIZE);
 		}
 		else
 		{
-			left.right = -1;
+			left.right_child = -1;
 		}
 	}
 
 	//read children of right node if not null
 	if(right != -1)
 	{
-		if(right.left != -1)
+		if(right.left_child != -1)
 		{
-			binFile.seekp( C_NODE_SIZE * right.left, ios::beg );
-			binFile.read( right_left, C_NODE_SIZE);
+			binFile.seekp( C_NODE_SIZE * right.left_child, ios::beg );
+			binFile.read((char*)&right_left, C_NODE_SIZE);
 		}
 		else
 		{
-			right.left = -1;
+			right.left_child = -1;
 		}
-		if(right.right != -1)
+		if(right.right_child != -1)
 		{
-			binFile.seekp( C_NODE_SIZE * right.right, ios::beg );
-			binFile.read( right_right, C_NODE_SIZE);
+			binFile.seekp( C_NODE_SIZE * right.right_child, ios::beg );
+			binFile.read((char*)&right_right, C_NODE_SIZE);
 		}
 		else
 		{
-			right.right = -1;
+			right.right_child = -1;
 		}
 	}
 	
