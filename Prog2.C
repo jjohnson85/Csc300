@@ -17,7 +17,9 @@ const int C_NODE_SIZE = sizeof(avl_tree_node);
 
 void avl_init( avl_tree_node &root, fstream &binFile, int  key );
 void rotateWithLeftChild( avl_tree_node &root, avl_tree_node &left, avl_tree_node &left_right);
+void rotateWithLeftChild( avl_tree_node &root, avl_tree_node &left);
 void rotateWithRightChild( avl_tree_node &root, avl_tree_node &right, avl_tree_node &right_left);
+void rotateWithRightChild( avl_tree_node &root, avl_tree_node &right);
 void doubleWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node &right,
  avl_tree_node &left_right, avl_tree_node &right_left);
 void doubleWithRightChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node &right,
@@ -269,11 +271,31 @@ avl_tree_node &right_left)
 	right.parent = temp.parent;
 }
 
+void rotateWithLeftChild(avl_tree_node &root, avl_tree_node &left)
+{
+	avl_tree_node temp;
+
+	temp.parent = root.parent;
+
+	root.parent = left.file_loc;
+	left.parent = temp.parent;
+	left.right_child = root.file_loc;
+}
+
+void rotateWithRightChild(avl_tree_node &root, avl_tree_node &right)
+{
+	avl_tree_node temp;
+
+	root.parent = right.file_loc;
+	right.parent = temp.parent;
+	right.left_child = root.file_loc;
+}
+
 void doubleWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node &right,
  avl_tree_node &left_right, avl_tree_node &right_left)
 {
 	//need to fix left_right_left issue
-	rotateWithRightChild(left, left_right, left_right_left);
+	rotateWithRightChild(left, left_right);
 	rotateWithLeftChild(root, left, left_right);
 }
 
@@ -282,7 +304,7 @@ void doubleWithRightChild(avl_tree_node &root, avl_tree_node &left, avl_tree_nod
 
 {
 	//Need to fix right_left_right issue
-	rotateWithLeftChild(right, right_left, right_left_right);
+	rotateWithLeftChild(right, right_left);
 	rotateWithRightChild(root, right, right_left);
 }
 
