@@ -16,15 +16,25 @@ const int C_NULL = -1;
 const int C_NODE_SIZE = sizeof(avl_tree_node);
 
 void avl_init( avl_tree_node &root, fstream &binFile, int  key );
-void rotateWithLeftChild( avl_tree_node &root, avl_tree_node &left, avl_tree_node &left_right, fstream &binFile);
+
+void rotateWithLeftChild( avl_tree_node &root, avl_tree_node &left, avl_tree_node &left_right,
+avl_tree_node &left_left, fstream &binFile);
+
 void rotateWithLeftChild( avl_tree_node &root, avl_tree_node &left, fstream &binFile);
-void rotateWithRightChild( avl_tree_node &root, avl_tree_node &right, avl_tree_node &right_left, fstream &binFile);
+
+void rotateWithRightChild( avl_tree_node &root, avl_tree_node &right, avl_tree_node &right_left,
+avl_tree_node &right_right, fstream &binFile);
+
 void rotateWithRightChild( avl_tree_node &root, avl_tree_node &right, fstream &binFile);
+
 void doubleWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node &right,
- avl_tree_node &left_right, avl_tree_node &right_left, fstream &binFile);
+ avl_tree_node &left_right, avl_tree_node &right_left, avl_tree_node &left_left, fstream &binFile);
+
 void doubleWithRightChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node &right,
- avl_tree_node &left_right, avl_tree_node &right_left, fstream &binFile);
+ avl_tree_node &left_right, avl_tree_node &right_left, avl_tree_node &right_right, fstream &binFile);
+
 void insert( avl_tree_node &root, fstream &binFile, int &key, int parent, int &location );
+
 int height( avl_tree_node &root, fstream &binFile );
 
 int main( int argc, char *argv[])
@@ -223,13 +233,13 @@ bool balance( avl_tree_node &root, fstream &binFile )
 		//If right subtree is left heavy
 		if(right_left.height > right_right.height)
 		{
-			doubleWithRightChild(root, left, right, left_right, right_left, binFile);
+			doubleWithRightChild(root, left, right, left_right, right_left, right_right, binFile);
 			return true;
 		}
 		//Else if right subtree is right heavy
 		else
 		{
-			rotateWithRightChild(root, right, right_left, binFile);
+			rotateWithRightChild(root, right, right_left, right_right, binFile);
 			return true;
 		}
 	}
@@ -239,13 +249,13 @@ bool balance( avl_tree_node &root, fstream &binFile )
 		//If left subtree is right heavy
 		if(left_left.height <  left_right.height)
 		{		
-			doubleWithLeftChild(root, left,right, left_right, right_left, binFile);
+			doubleWithLeftChild(root, left,right, left_right, right_left, left_left, binFile);
 			return true;
 		}	
 		//Else if left subtree is left heavy
 		else
 		{
-			rotateWithLeftChild(root, left, left_right, binFile);
+			rotateWithLeftChild(root, left, left_right, left_left, binFile);
 			return true;
 		}
 	}
@@ -257,7 +267,7 @@ bool balance( avl_tree_node &root, fstream &binFile )
 }
 
 void rotateWithLeftChild(avl_tree_node &root, avl_tree_node &left,
-avl_tree_node &left_right, fstream &binFile)
+avl_tree_node &left_right, avl_tree_node &left_left, fstream &binFile)
 {
 	avl_tree_node temp;
 	cout << "Writing one!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
@@ -275,6 +285,10 @@ avl_tree_node &left_right, fstream &binFile)
 	{
 	root.file_loc = left.file_loc;
 	left.file_loc = temp.file_loc;	
+	
+	left_left.parent = left.file_loc;
+	binFile.seekp( C_NODE_SIZE * left_left.file_loc, ios::beg);
+	binFile.write( (char*) &left_left, C_NODE_SIZE);
 	}
 
 	root.left_child = left_right.file_loc;
@@ -362,7 +376,7 @@ avl_tree_node &left_right, fstream &binFile)
 }
 
 void rotateWithRightChild(avl_tree_node &root, avl_tree_node &right,
-avl_tree_node &right_left, fstream &binFile)
+avl_tree_node &right_left, avl_tree_node &right_right, fstream &binFile)
 {
 	avl_tree_node temp;
 	cout << "3 NODE RIGHT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;	
@@ -453,20 +467,20 @@ void rotateWithRightChild(avl_tree_node &root, avl_tree_node &right, fstream &bi
 }
 
 void doubleWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node &right,
- avl_tree_node &left_right, avl_tree_node &right_left, fstream &binFile)
+ avl_tree_node &left_right, avl_tree_node &right_left, avl_tree_node &left_left, fstream &binFile)
 {
 	//need to fix left_right_left issue
 	rotateWithRightChild(left, left_right, binFile);
-	rotateWithLeftChild(root, left, left_right, binFile);
+	rotateWithLeftChild(root, left, left_right, left_left, binFile);
 }
 
 void doubleWithRightChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node &right,
- avl_tree_node &left_right, avl_tree_node &right_left, fstream &binFile)
+ avl_tree_node &left_right, avl_tree_node &right_left, avl_tree_node &right_right, fstream &binFile)
 
 {
 	//Need to fix right_left_right issue
 	rotateWithLeftChild(right, right_left, binFile);
-	rotateWithRightChild(root, right, right_left, binFile);
+	rotateWithRightChild(root, right, right_left, right_right, binFile);
 }
 
 //Recursively write node records to the binary file
