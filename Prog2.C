@@ -20,12 +20,12 @@ void avl_init( avl_tree_node &root, fstream &binFile, int  key );
 void rotateWithLeftChild( avl_tree_node &root, avl_tree_node &left, avl_tree_node &left_right,
 avl_tree_node &left_left, fstream &binFile);
 
-void rotateWithLeftChild( avl_tree_node &root, avl_tree_node &left, fstream &binFile);
+void rotateWithLeftChild( avl_tree_node &root, avl_tree_node &left, avl_tree_node &parent, fstream &binFile);
 
 void rotateWithRightChild( avl_tree_node &root, avl_tree_node &right, avl_tree_node &right_left,
 avl_tree_node &right_right, fstream &binFile);
 
-void rotateWithRightChild( avl_tree_node &root, avl_tree_node &right, fstream &binFile);
+void rotateWithRightChild( avl_tree_node &root, avl_tree_node &right, avl_tree_node &parent, fstream &binFile);
 
 void doubleWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node &right,
  avl_tree_node &left_right, avl_tree_node &right_left, avl_tree_node &left_left, fstream &binFile);
@@ -439,7 +439,7 @@ avl_tree_node &right_left, avl_tree_node &right_right, fstream &binFile)
 	cout << "Right Left Child: " << blah.left_child << endl;
 	cout << "Right Right Child: " << blah.right_child << endl;
 }
-void rotateWithLeftChild(avl_tree_node &root, avl_tree_node &left, fstream &binFile)
+void rotateWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node &parent, fstream &binFile)
 {
 	avl_tree_node temp;
 
@@ -520,7 +520,7 @@ void rotateWithLeftChild(avl_tree_node &root, avl_tree_node &left, fstream &binF
 }
 
 
-void rotateWithRightChild(avl_tree_node &root, avl_tree_node &right, fstream &binFile)
+void rotateWithRightChild(avl_tree_node &root, avl_tree_node &right, avl_tree_node &parent, fstream &binFile)
 {
 	avl_tree_node temp;
 
@@ -546,6 +546,7 @@ void rotateWithRightChild(avl_tree_node &root, avl_tree_node &right, fstream &bi
 	//setting root.right_child to null, shoudl be correct
 	root.right_child = -1;
 	right.left_child = root.file_loc;
+	parent.left_child = right.file_loc;
 
 	if(root.parent == -1)
 	{
@@ -604,7 +605,7 @@ void doubleWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node
  avl_tree_node &left_right, avl_tree_node &right_left, avl_tree_node &left_left, fstream &binFile)
 {
 	//need to fix left_right_left issue
-	rotateWithRightChild(left, left_right, binFile);
+	rotateWithRightChild(left, left_right, root, binFile);
 	
 	cout << "Root Parent: " << root.parent << endl;
 	cout << "Root Value: " << root.key_value << endl;
@@ -651,7 +652,7 @@ void doubleWithRightChild(avl_tree_node &root, avl_tree_node &left, avl_tree_nod
 
 {
 	//Need to fix right_left_right issue
-	rotateWithLeftChild(right, right_left, binFile);
+	rotateWithLeftChild(right, right_left, root, binFile);
 	rotateWithRightChild(root, right, right_left, right_right, binFile);
 }
 
