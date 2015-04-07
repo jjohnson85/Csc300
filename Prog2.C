@@ -431,8 +431,8 @@ avl_tree_node &right_left, avl_tree_node &right_right, fstream &binFile)
 	{
 	binFile.seekp( C_NODE_SIZE * right.parent, ios::beg);
 	binFile.read( (char*) &temp, C_NODE_SIZE);
-
-	temp.left_child = right.file_loc;
+	//HEUHPFHUHIHWIUHUFSDHIFHWEHIUFWHEIHFIUWEH
+	temp.right_child = right.file_loc;
 	
 	binFile.seekp( C_NODE_SIZE * temp.file_loc, ios::beg);
 	binFile.write( (char*) &temp, C_NODE_SIZE);
