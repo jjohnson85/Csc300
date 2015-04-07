@@ -88,6 +88,7 @@ int main( int argc, char *argv[])
 
 	for( i=0; i < 5 ; i++ )
 	{
+	cout << i << endl;
 	binFile.seekg(C_NODE_SIZE*i, ios::beg);
 	binFile.read((char*)&root, C_NODE_SIZE);
 	cout << "key value is: " << root.key_value << endl;
@@ -268,26 +269,31 @@ avl_tree_node &left_right, fstream &binFile)
 	//I don't know if this does height correctly since
 	//I didn't change the height like they do in the book
 	temp.parent = root.parent;
+	temp.file_loc = root.file_loc;
+
+	if(root.parent == -1)
+	{
+	root.file_loc = left.file_loc;
+	left.file_loc = temp.file_loc;	
+	}
 
 	root.left_child = left_right.file_loc;
 	left_right.parent = root.file_loc;
 	left.right_child = root.file_loc;
 	root.parent = left.file_loc;
-	left.parent = temp.parent;
-	
-	if(root.parent == -1)
-	{
-	temp.file_loc = root.file_loc;
-	root.file_loc = left.file_loc;
-	left.file_loc = temp.file_loc;	
-	}
+	left.parent = temp.parent;	
 
 	//writing of nodes
 	root.height = height(root, binFile);
+	cout << "ROOT FILE LOC: " << root.file_loc;
+	cout << "ROOT VALUE: " << root.key_value;
 
 	binFile.seekp( C_NODE_SIZE * root.file_loc, ios::beg);
 	binFile.write( (char*) &root, C_NODE_SIZE);
 
+	cout << "LEFT FILE LOC: " << left.file_loc;
+	cout << "LEFT VALUE: " << left.key_value;
+	
 	binFile.seekp( C_NODE_SIZE * left.file_loc, ios::beg);
 	binFile.write( (char*) &left, C_NODE_SIZE);
 
@@ -297,6 +303,9 @@ avl_tree_node &left_right, fstream &binFile)
 	binFile.write( (char*) &left_right, C_NODE_SIZE);
 	}
 
+	cout << "LEFT PARENT!!!!!!!: " << left.parent << endl;
+	if(left.parent != -1)
+	{
 	binFile.seekp( C_NODE_SIZE * left.parent, ios::beg);
 	binFile.read( (char*) &temp, C_NODE_SIZE);
 
@@ -304,26 +313,37 @@ avl_tree_node &left_right, fstream &binFile)
 	
 	binFile.seekp( C_NODE_SIZE * temp.file_loc, ios::beg);
 	binFile.write( (char*) &temp, C_NODE_SIZE);
-	
+	}
+
+	binFile.seekp( C_NODE_SIZE * 0, ios::beg);
+	binFile.read( (char*) &temp, C_NODE_SIZE);
+
+	avl_tree_node blah;
+
 	cout << "Root Location: " << temp.file_loc << endl;
 	cout << "Root Value: " << temp.key_value << endl;
 	cout << "Root Parent: " << temp.parent << endl;
 	cout << "Root Left Child: " << temp.left_child << endl;
 	cout << "Root Right Child: " << temp.right_child << endl;
 
-	binFile.seekp( C_NODE_SIZE * temp.right_child, ios::beg);
-	binFile.read( (char*) &temp, C_NODE_SIZE);
+	binFile.seekp( C_NODE_SIZE * temp.left_child, ios::beg);
+	binFile.read( (char*) &blah, C_NODE_SIZE);
 
-	cout << "Right Location: " << temp.file_loc << endl;
-	cout << "Right Value: " << temp.key_value << endl;
-	cout << "Right Parent: " << temp.parent << endl;
+	cout << "Left Location: " << blah.file_loc << endl;
+	cout << "Left Value: " << blah.key_value << endl;
+	cout << "Left Parent: " << blah.parent << endl;
+	cout << "Left Left Child: " << blah.left_child << endl;
+	cout << "Left Right Child: " << blah.right_child << endl;
 	
-	cout << "Left Location: " << left.file_loc << endl;
-	cout << "Left Value: " << left.key_value << endl;
-	cout << "Left Parent: " << left.parent << endl;
-	cout << "Left Left Child: " << left.left_child << endl;
-	cout << "Left Right Child: " << left.right_child << endl;
-	
+	binFile.seekp( C_NODE_SIZE * temp.right_child, ios::beg);
+	binFile.read( (char*) &blah, C_NODE_SIZE);
+
+	cout << "Right Location: " << blah.file_loc << endl;
+	cout << "Right Value: " << blah.key_value << endl;
+	cout << "Right Parent: " << blah.parent << endl;	
+	cout << "Right Left Child: " << blah.left_child << endl;
+	cout << "Right Right Child: " << blah.right_child << endl;
+/*
 	cout << "Left_Right Location: " << root.file_loc << endl;
 	cout << "Left_Right Value: " << root.key_value << endl;
 	cout << "Left_Right Parent: " << root.parent << endl;
@@ -338,6 +358,7 @@ avl_tree_node &left_right, fstream &binFile)
 	cout << "Left.left_child Parent: " << temp.parent << endl;
 	cout << "Left.left_child Left Child: " << temp.left_child << endl;
 	cout << "Left.left_child Right Child: " << temp.right_child << endl;
+*/
 }
 
 void rotateWithRightChild(avl_tree_node &root, avl_tree_node &right,
