@@ -270,14 +270,8 @@ void rotateWithLeftChild(avl_tree_node &root, avl_tree_node &left,
 avl_tree_node &left_right, avl_tree_node &left_left, fstream &binFile)
 {
 	avl_tree_node temp;
-	cout << "Writing one!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
-	/*concept, need to use temp and rewrite values in each record
-	root.left_child point to left.right_child;
-	left.right_child point to root;
-	*/
-		
-	//I don't know if this does height correctly since
-	//I didn't change the height like they do in the book
+	cout << "Left 4 node!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
+	
 	temp.parent = root.parent;
 	temp.file_loc = root.file_loc;
 
@@ -357,36 +351,14 @@ avl_tree_node &left_right, avl_tree_node &left_left, fstream &binFile)
 	cout << "Right Parent: " << blah.parent << endl;	
 	cout << "Right Left Child: " << blah.left_child << endl;
 	cout << "Right Right Child: " << blah.right_child << endl;
-/*
-	cout << "Left_Right Location: " << root.file_loc << endl;
-	cout << "Left_Right Value: " << root.key_value << endl;
-	cout << "Left_Right Parent: " << root.parent << endl;
-	cout << "Left_Right Left Child: " << root.left_child << endl;
-	cout << "Left_Right Right Child: " << root.right_child << endl;
-	
-	binFile.seekp( C_NODE_SIZE * left.left_child, ios::beg);
-	binFile.read( (char*) &temp, C_NODE_SIZE);
-
-	cout << "Left.left_child Location: " << temp.file_loc << endl;
-	cout << "Left.left_child Value: " << temp.key_value << endl;
-	cout << "Left.left_child Parent: " << temp.parent << endl;
-	cout << "Left.left_child Left Child: " << temp.left_child << endl;
-	cout << "Left.left_child Right Child: " << temp.right_child << endl;
-*/
 }
 
 void rotateWithRightChild(avl_tree_node &root, avl_tree_node &right,
 avl_tree_node &right_left, avl_tree_node &right_right, fstream &binFile)
 {
 	avl_tree_node temp;
-	cout << "Writing one!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
-	/*concept, need to use temp and rewrite values in each record
-	root.left_child point to left.right_child;
-	left.right_child point to root;
-	*/
-		
-	//I don't know if this does height correctly since
-	//I didn't change the height like they do in the book
+	cout << "Right 4 node!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
+	
 	temp.parent = root.parent;
 	temp.file_loc = root.file_loc;
 
@@ -414,8 +386,8 @@ avl_tree_node &right_left, avl_tree_node &right_right, fstream &binFile)
 	binFile.seekp( C_NODE_SIZE * root.file_loc, ios::beg);
 	binFile.write( (char*) &root, C_NODE_SIZE);
 
-	cout << "LEFT FILE LOC: " << right.file_loc;
-	cout << "LEFT VALUE: " << right.key_value;
+	cout << "Right FILE LOC: " << right.file_loc;
+	cout << "Right VALUE: " << right.key_value;
 	
 	binFile.seekp( C_NODE_SIZE * right.file_loc, ios::beg);
 	binFile.write( (char*) &right, C_NODE_SIZE);
@@ -426,12 +398,12 @@ avl_tree_node &right_left, avl_tree_node &right_right, fstream &binFile)
 	binFile.write( (char*) &right_left, C_NODE_SIZE);
 	}
 
-	cout << "LEFT PARENT!!!!!!!: " << right.parent << endl;
+	cout << "Right PARENT!!!!!!!: " << right.parent << endl;
 	if(right.parent != -1)
 	{
 	binFile.seekp( C_NODE_SIZE * right.parent, ios::beg);
 	binFile.read( (char*) &temp, C_NODE_SIZE);
-	//HEUHPFHUHIHWIUHUFSDHIFHWEHIUFWHEIHFIUWEH
+
 	temp.right_child = right.file_loc;
 	
 	binFile.seekp( C_NODE_SIZE * temp.file_loc, ios::beg);
@@ -466,22 +438,6 @@ avl_tree_node &right_left, avl_tree_node &right_right, fstream &binFile)
 	cout << "Right Parent: " << blah.parent << endl;	
 	cout << "Right Left Child: " << blah.left_child << endl;
 	cout << "Right Right Child: " << blah.right_child << endl;
-/*
-	cout << "Left_Right Location: " << root.file_loc << endl;
-	cout << "Left_Right Value: " << root.key_value << endl;
-	cout << "Left_Right Parent: " << root.parent << endl;
-	cout << "Left_Right Left Child: " << root.left_child << endl;
-	cout << "Left_Right Right Child: " << root.right_child << endl;
-	
-	binFile.seekp( C_NODE_SIZE * left.left_child, ios::beg);
-	binFile.read( (char*) &temp, C_NODE_SIZE);
-
-	cout << "Left.left_child Location: " << temp.file_loc << endl;
-	cout << "Left.left_child Value: " << temp.key_value << endl;
-	cout << "Left.left_child Parent: " << temp.parent << endl;
-	cout << "Left.left_child Left Child: " << temp.left_child << endl;
-	cout << "Left.left_child Right Child: " << temp.right_child << endl;
-*/
 }
 void rotateWithLeftChild(avl_tree_node &root, avl_tree_node &left, fstream &binFile)
 {
@@ -513,9 +469,28 @@ void rotateWithLeftChild(avl_tree_node &root, avl_tree_node &left, fstream &binF
 void rotateWithRightChild(avl_tree_node &root, avl_tree_node &right, fstream &binFile)
 {
 	avl_tree_node temp;
+
+	temp.parent = root.parent;
 	cout << "2 NODE RIGHT???????????????????????????????????????????????????????????????????" << endl;
+
+	cout << "Root Parent: " << root.parent << endl;
+	cout << "Root Value: " << root.key_value << endl;
+	cout << "Root Left Child: " << root.left_child << endl;
+	cout << "Root Right Child: " << root.right_child << endl;
+	cout << "Root Location: " << root.file_loc << endl;
+	cout << "Root Height: " << root.height << endl;
+
+	cout << "Right Parent: " << right.parent << endl;
+	cout << "Right Value: " << right.key_value << endl;
+	cout << "Right Left Child: " << right.left_child << endl;
+	cout << "Right Right Child: " << right.right_child << endl;
+	cout << "Right Location: " << right.file_loc << endl;
+	cout << "Right Height: " << right.height << endl << endl;
+
 	root.parent = right.file_loc;
 	right.parent = temp.parent;
+	//setting root.right_child to null, shoudl be correct
+	root.right_child = -1;
 	right.left_child = root.file_loc;
 
 	if(root.parent == -1)
@@ -524,6 +499,38 @@ void rotateWithRightChild(avl_tree_node &root, avl_tree_node &right, fstream &bi
 	root.file_loc = right.file_loc;
 	right.file_loc = temp.file_loc;	
 	}
+
+	root.height = height(root, binFile);
+
+	cout << "Root Parent: " << root.parent << endl;
+	cout << "Root Value: " << root.key_value << endl;
+	cout << "Root Left Child: " << root.left_child << endl;
+	cout << "Root Right Child: " << root.right_child << endl;
+	cout << "Root Location: " << root.file_loc << endl;
+	cout << "Root Height: " << root.height << endl;
+
+	cout << "Right Parent: " << right.parent << endl;
+	cout << "Right Value: " << right.key_value << endl;
+	cout << "Right Left Child: " << right.left_child << endl;
+	cout << "Right Right Child: " << right.right_child << endl;
+	cout << "Right Location: " << right.file_loc << endl;
+	cout << "Right Height: " << right.height << endl << endl;
+
+	right.height = height(right, binFile) + 1;
+	
+	cout << "Root Parent: " << root.parent << endl;
+	cout << "Root Value: " << root.key_value << endl;
+	cout << "Root Left Child: " << root.left_child << endl;
+	cout << "Root Right Child: " << root.right_child << endl;
+	cout << "Root Location: " << root.file_loc << endl;
+	cout << "Root Height: " << root.height << endl;
+
+	cout << "Right Parent: " << right.parent << endl;
+	cout << "Right Value: " << right.key_value << endl;
+	cout << "Right Left Child: " << right.left_child << endl;
+	cout << "Right Right Child: " << right.right_child << endl;
+	cout << "Right Location: " << right.file_loc << endl;
+	cout << "Right Height: " << right.height << endl << endl;
 
 	//writing of nodes
 	binFile.seekp( C_NODE_SIZE * root.file_loc, ios::beg);
@@ -667,6 +674,7 @@ int height( avl_tree_node &root, fstream &binFile )
 {
 	int leftHeight;
 	int rightHeight;
+	int rootLoc = root.file_loc;
 	
 	//read the heights of both left and right children from parent
 	if( root.left_child != C_NULL)
@@ -675,7 +683,7 @@ int height( avl_tree_node &root, fstream &binFile )
 		binFile.read((char*)&root, C_NODE_SIZE);
 		leftHeight = root.height;
 
-		binFile.seekg(C_NODE_SIZE*root.parent, ios::beg);
+		binFile.seekg(C_NODE_SIZE*rootLoc, ios::beg);
 		binFile.read((char*)&root, C_NODE_SIZE);
 	}
 	else
@@ -689,7 +697,7 @@ int height( avl_tree_node &root, fstream &binFile )
 		binFile.read((char*)&root, C_NODE_SIZE);
 		rightHeight = root.height;
 
-		binFile.seekg(C_NODE_SIZE*root.parent, ios::beg);
+		binFile.seekg(C_NODE_SIZE*rootLoc, ios::beg);
 		binFile.read((char*)&root, C_NODE_SIZE);
 	}
 	else
