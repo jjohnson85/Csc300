@@ -605,6 +605,44 @@ void doubleWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node
 {
 	//need to fix left_right_left issue
 	rotateWithRightChild(left, left_right, binFile);
+	
+	cout << "Root Parent: " << root.parent << endl;
+	cout << "Root Value: " << root.key_value << endl;
+	cout << "Root Left Child: " << root.left_child << endl;
+	cout << "Root Right Child: " << root.right_child << endl;
+	cout << "Root Location: " << root.file_loc << endl;
+	cout << "Root Height: " << root.height << endl;
+
+	cout << "Left Parent: " << left.parent << endl;
+	cout << "Left Value: " << left.key_value << endl;
+	cout << "Left Left Child: " << left.left_child << endl;
+	cout << "Left Right Child: " << left.right_child << endl;
+	cout << "Left Location: " << left.file_loc << endl;
+	cout << "Left Height: " << left.height << endl << endl;
+
+	cout << "Right Parent: " << right.parent << endl;
+	cout << "Right Value: " << right.key_value << endl;
+	cout << "Right Left Child: " << right.left_child << endl;
+	cout << "Right Right Child: " << right.right_child << endl;
+	cout << "Right Location: " << right.file_loc << endl;
+	cout << "Right Height: " << right.height << endl << endl;
+
+	cout << "Left_Right Parent: " << left_right.parent << endl;
+	cout << "Left_Right Value: " << left_right.key_value << endl;
+	cout << "Left_Right Left Child: " << left_right.left_child << endl;
+	cout << "Left_Right Right Child: " << left_right.right_child << endl;
+	cout << "Left_Right Location: " << left_right.file_loc << endl;
+	cout << "Left_Right Height: " << left_right.height << endl << endl;
+
+	cout << "Left_Left Parent: " << left_left.parent << endl;
+	cout << "Left_Left Value: " << left_left.key_value << endl;
+	cout << "Left_Left Left Child: " << left_left.left_child << endl;
+	cout << "Left_Left Right Child: " << left_left.right_child << endl;
+	cout << "Left_Left Location: " << left_left.file_loc << endl;
+	cout << "Left_Left Height: " << left_left.height << endl << endl;
+
+
+
 	rotateWithLeftChild(root, left, left_right, left_left, binFile);
 }
 
