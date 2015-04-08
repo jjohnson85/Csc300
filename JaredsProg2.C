@@ -38,15 +38,17 @@ const int C_NODE_SIZE = sizeof(avl_tree_node);
 /***********************Function Prototypes***********************************/
 void avl_init( avl_tree_node &root, fstream &binFile, int  key );
 
-void rotateWithLeftChild( avl_tree_node &root, avl_tree_node &left, avl_tree_node &left_right,
-avl_tree_node &left_left, fstream &binFile);
+void rotateWithLeftChild( avl_tree_node &root, avl_tree_node &left,
+ avl_tree_node &left_right, avl_tree_node &left_left, fstream &binFile);
 
-void rotateWithLeftChild( avl_tree_node &root, avl_tree_node &left, avl_tree_node &parent, fstream &binFile);
+void rotateWithLeftChild( avl_tree_node &root, avl_tree_node &left,
+ avl_tree_node &parent, fstream &binFile);
 
-void rotateWithRightChild( avl_tree_node &root, avl_tree_node &right, avl_tree_node &right_left,
-avl_tree_node &right_right, fstream &binFile);
+void rotateWithRightChild( avl_tree_node &root, avl_tree_node &right,
+ avl_tree_node &right_left, avl_tree_node &right_right, fstream &binFile);
 
-void rotateWithRightChild( avl_tree_node &root, avl_tree_node &right, avl_tree_node &parent, fstream &binFile);
+void rotateWithRightChild( avl_tree_node &root, avl_tree_node &right,
+ avl_tree_node &parent, fstream &binFile);
 
 void doubleWithLeftChild(avl_tree_node &root, avl_tree_node &left,
  avl_tree_node &right, avl_tree_node &left_right, avl_tree_node &right_left,
@@ -60,6 +62,8 @@ void insert( avl_tree_node &root, fstream &binFile, int &key,
  int parent, int &location );
 
 int height( avl_tree_node &root, fstream &binFile );
+
+void findMinMax( avl_tree_node &root, fstream &binFile, int &min, int &max, int parent);
 
 
 /*****************************************************************************
@@ -76,9 +80,10 @@ int main( int argc, char *argv[])
 {
 	ifstream fin;
 	fstream binFile;
-	//DEBUG
+	
 	avl_tree_node root;
-	avl_tree_node copy;
+	int min = -2;
+	int max = -2;
 	int key = C_NULL;
 	int location = 1;
 	int parent = 0;
@@ -126,12 +131,81 @@ int main( int argc, char *argv[])
 		binFile.read((char*)&root, C_NODE_SIZE);
 		insert(root, binFile, key, parent, location );
 		location++;
-	}	
+	}
+	
+	
+	//get the smallest leaf value
+	binFile.seekg(0, ios::beg);
+	binFile.read((char*)&root, C_NODE_SIZE);
+	parent = 0;
+
+	findMinMax(root, binFile, min, max, parent);
+
+	binFile.seekg(0, ios::beg);
+	binFile.read((char*)&root, C_NODE_SIZE);
+
+	cout << "The height of this tree: " << root.height << endl;
+	cout << "Root value: " << root.key_value << endl;
+	cout << "Smallest value in leaf: " << min << endl;
+	cout << "Largest value in leaf: " << max << endl;
 
 	binFile.close();
 	fin.close();
 	return 0;
 }
+
+/*****************************************************************************
+ *Function: findMinMax
+ *Author: Jared Johnson
+ *Description: Traverses the final avl tree in the binary file to find both
+the min and max values in leaf nodes.
+ *Parameters: <in/out> avl_tree_node &root - primary avl node for tree traversal
+              <in/out> fstream &binFile - binary input/output file
+              <in/out> int &min - minimum leaf node value
+              <in/out> int &max - maximum leaf node value
+              <in> int parent - parent value to return to in recursion
+ * ***************************************************************************/
+void findMinMax( avl_tree_node &root, fstream &binFile, int &min, int &max,
+ int parent)
+{
+	if( root.left_child == C_NULL && root.right_child == C_NULL )
+	{
+		if( root.key_value < min || min == -2 )
+		{
+			min = root.key_value;
+		}
+		else if( root.key_value > max || max == -2 )
+		{
+			max = root.key_value;
+		}
+	}	
+	
+	parent = root.file_loc;
+
+	if( root.left_child != C_NULL )
+	{
+	binFile.seekg(C_NODE_SIZE*root.left_child, ios::beg);
+	binFile.read((char*)&root, C_NODE_SIZE);
+
+
+	findMinMax(root, binFile, min, max, parent);
+		
+	binFile.seekg(C_NODE_SIZE*parent, ios::beg);
+	binFile.read((char*)&root, C_NODE_SIZE);
+	}
+
+	if( root.right_child != C_NULL )
+	{
+	binFile.seekg(C_NODE_SIZE*root.right_child, ios::beg);
+	binFile.read((char*)&root, C_NODE_SIZE);
+
+	findMinMax(root, binFile, min, max, parent);
+
+	binFile.seekg(C_NODE_SIZE*parent, ios::beg);
+	binFile.read((char*)&root, C_NODE_SIZE);
+	}
+}
+
 
 /*****************************************************************************
  *Function: avl_init
@@ -260,13 +334,15 @@ bool balance( avl_tree_node &root, fstream &binFile )
 		//If right subtree is left heavy
 		if(right_left.height > right_right.height)
 		{
-			doubleWithRightChild(root, left, right, left_right, right_left, right_right, binFile);
+			doubleWithRightChild(root, left, right, left_right,
+			 right_left, right_right, binFile);
 			return true;
 		}
 		//Else if right subtree is right heavy
 		else
 		{
-			rotateWithRightChild(root, right, right_left, right_right, binFile);
+			rotateWithRightChild(root, right, right_left,
+			 right_right, binFile);
 			return true;
 		}
 	}
@@ -276,13 +352,15 @@ bool balance( avl_tree_node &root, fstream &binFile )
 		//If left subtree is right heavy
 		if(left_left.height <  left_right.height)
 		{		
-			doubleWithLeftChild(root, left,right, left_right, right_left, left_left, binFile);
+			doubleWithLeftChild(root, left,right, left_right,
+			 right_left, left_left, binFile);
 			return true;
 		}	
 		//Else if left subtree is left heavy
 		else
 		{
-			rotateWithLeftChild(root, left, left_right, left_left, binFile);
+			rotateWithLeftChild(root, left, left_right,
+			 left_left, binFile);
 			return true;
 		}
 	}
@@ -447,7 +525,8 @@ avl_tree_node &right_left, avl_tree_node &right_right, fstream &binFile)
 		       update children.
               <in/out> fstream &binFile - binary input/output file
  * ***************************************************************************/
-void rotateWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node &parent, fstream &binFile)
+void rotateWithLeftChild(avl_tree_node &root, avl_tree_node &left,
+ avl_tree_node &parent, fstream &binFile)
 {
 	avl_tree_node temp;
 
@@ -511,7 +590,8 @@ void rotateWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node
 		       update children.
               <in/out> fstream &binFile - binary input/output file
  * ***************************************************************************/
-void rotateWithRightChild(avl_tree_node &root, avl_tree_node &right, avl_tree_node &parent, fstream &binFile)
+void rotateWithRightChild(avl_tree_node &root, avl_tree_node &right,
+ avl_tree_node &parent, fstream &binFile)
 {
 	avl_tree_node temp;
 
@@ -576,8 +656,9 @@ void rotateWithRightChild(avl_tree_node &root, avl_tree_node &right, avl_tree_no
 	      <in/out> avl_tree_node &left_left - left's left child
               <in/out> fstream &binFile - binary input/output file
  * ***************************************************************************/
-void doubleWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node &right,
- avl_tree_node &left_right, avl_tree_node &right_left, avl_tree_node &left_left, fstream &binFile)
+void doubleWithLeftChild(avl_tree_node &root, avl_tree_node &left,
+ avl_tree_node &right, avl_tree_node &left_right, avl_tree_node &right_left,
+ avl_tree_node &left_left, fstream &binFile)
 {
 	rotateWithRightChild(left, left_right, root, binFile);
 
@@ -599,8 +680,9 @@ void doubleWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node
 	      <in/out> avl_tree_node &right_right - right's right child
               <in/out> fstream &binFile - binary input/output file
  * ***************************************************************************/
-void doubleWithRightChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node &right,
- avl_tree_node &left_right, avl_tree_node &right_left, avl_tree_node &right_right, fstream &binFile)
+void doubleWithRightChild(avl_tree_node &root, avl_tree_node &left,
+ avl_tree_node &right, avl_tree_node &left_right, avl_tree_node &right_left,
+ avl_tree_node &right_right, fstream &binFile)
 
 {
 	rotateWithLeftChild(right, right_left, root, binFile);
@@ -621,7 +703,8 @@ current key value to insert with key value in current root in the recursion.
               <in/out> int &location - location for new node to assign to
 parent
  * ***************************************************************************/
-void insert( avl_tree_node &root, fstream &binFile, int &key, int parent, int &location )
+void insert( avl_tree_node &root, fstream &binFile, int &key,
+ int parent, int &location )
 {	
 	
 	//Case if left is empty and key fits in left
