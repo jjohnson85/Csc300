@@ -705,7 +705,9 @@ void doubleWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node
 	cout << "Left_Left Location: " << left_left.file_loc << endl;
 	cout << "Left_Left Height: " << left_left.height << endl << endl;
 
-	rotateWithLeftChild(root, left, left_right, left_left, binFile);
+
+	//root, left, left_right, left_left
+	rotateWithLeftChild(root, left_right, left_left, left, binFile);
 
 	cout << "Root Parent: " << root.parent << endl;
 	cout << "Root Value: " << root.key_value << endl;
