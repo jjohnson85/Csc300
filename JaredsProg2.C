@@ -158,8 +158,8 @@ void avl_init( avl_tree_node &root, fstream &binFile, int  key )
 }
 
 /*****************************************************************************
- *Function: balance
- *Author's: Jared Johnson, Christain Sieh
+ *Function: Balance
+ *Author's: Jared Johnson, Christian Sieh
  *Description: Reads nessessary values to determining the balance of the tree,
 avl nodes around root value passed in, left, right, left_left, left_right,
 right_left, and right_right. Once an imbalace is detected this function calls
@@ -294,27 +294,36 @@ bool balance( avl_tree_node &root, fstream &binFile )
 }
 
 /*****************************************************************************
- *
- *
- *
- *
+ *Function: rotateWithLeftChild
+ *Author's: Christian Sieh
+ *Description: Takes the root supplied and puts it as root's left child's
+	       right child and updates all nodes accordingly. Also writes the
+	       nodes back to the file.
+ *Parameters: <in/out> avl_tree_node &root - primary avl_node for building tree
+	      <in/out> avl_tree_node &left - root's left child
+	      <in/out> avl_tree_node &left_right - left's right child
+	      <in/out> avl_tree_node &left_left - left's left child
+              <in/out> fstream &binFile - binary input/output file
  * ***************************************************************************/
 void rotateWithLeftChild(avl_tree_node &root, avl_tree_node &left,
 avl_tree_node &left_right, avl_tree_node &left_left, fstream &binFile)
 {
 	avl_tree_node temp;
 
+	//Save root variables in temp
 	temp.parent = root.parent;
 	temp.file_loc = root.file_loc;
-
+	
+	//If it's the root of the tree this code lets us swap
+	//the location of left and root in the file
 	if(root.parent == -1)
 	{
-	root.file_loc = left.file_loc;
-	left.file_loc = temp.file_loc;	
+		root.file_loc = left.file_loc;
+		left.file_loc = temp.file_loc;	
 	
-	left_left.parent = left.file_loc;
-	binFile.seekp( C_NODE_SIZE * left_left.file_loc, ios::beg);
-	binFile.write( (char*) &left_left, C_NODE_SIZE);
+		left_left.parent = left.file_loc;
+		binFile.seekp( C_NODE_SIZE * left_left.file_loc, ios::beg);
+		binFile.write( (char*) &left_left, C_NODE_SIZE);
 	}
 
 	root.left_child = left_right.file_loc;
@@ -323,8 +332,10 @@ avl_tree_node &left_right, avl_tree_node &left_left, fstream &binFile)
 	root.parent = left.file_loc;
 	left.parent = temp.parent;	
 
-	//writing of nodes
+	//Fixes Height
 	root.height = height(root, binFile);
+
+	//Writes out the nodes
 	binFile.seekp( C_NODE_SIZE * root.file_loc, ios::beg);
 	binFile.write( (char*) &root, C_NODE_SIZE);
 
@@ -332,60 +343,58 @@ avl_tree_node &left_right, avl_tree_node &left_left, fstream &binFile)
 	binFile.seekp( C_NODE_SIZE * left.file_loc, ios::beg);
 	binFile.write( (char*) &left, C_NODE_SIZE);
 
+	//Writes out left_right if it's not null
 	if(left_right.file_loc != -1)
 	{
-	binFile.seekp( C_NODE_SIZE * left_right.file_loc, ios::beg);
-	binFile.write( (char*) &left_right, C_NODE_SIZE);
+		binFile.seekp( C_NODE_SIZE * left_right.file_loc, ios::beg);
+		binFile.write( (char*) &left_right, C_NODE_SIZE);
 	}
 
+	//Fixes parent/children "pointers" if necessary
 	if(left.parent != -1)
 	{
-	binFile.seekp( C_NODE_SIZE * left.parent, ios::beg);
-	binFile.read( (char*) &temp, C_NODE_SIZE);
+		binFile.seekp( C_NODE_SIZE * left.parent, ios::beg);
+		binFile.read( (char*) &temp, C_NODE_SIZE);
 
-	temp.left_child = left.file_loc;
+		temp.left_child = left.file_loc;
 	
-	binFile.seekp( C_NODE_SIZE * temp.file_loc, ios::beg);
-	binFile.write( (char*) &temp, C_NODE_SIZE);
+		binFile.seekp( C_NODE_SIZE * temp.file_loc, ios::beg);
+		binFile.write( (char*) &temp, C_NODE_SIZE);
 	}
-
-	binFile.seekp( C_NODE_SIZE * 0, ios::beg);
-	binFile.read( (char*) &temp, C_NODE_SIZE);
-
-	avl_tree_node blah;
-
-	binFile.seekp( C_NODE_SIZE * temp.left_child, ios::beg);
-	binFile.read( (char*) &blah, C_NODE_SIZE);
-
-	binFile.seekp( C_NODE_SIZE * temp.right_child, ios::beg);
-	binFile.read( (char*) &blah, C_NODE_SIZE);
-
 }
 
 /*****************************************************************************
- *
- *
- *
- *
+ *Function: rotateWithRightChild
+ *Author's: Christian Sieh
+ *Description: Takes the root supplied and puts it as root's right child's
+	       left child and updates all nodes accordingly. Also writes the
+	       nodes back to the file.
+ *Parameters: <in/out> avl_tree_node &root - primary avl_node for building tree
+	      <in/out> avl_tree_node &right - root's right child
+	      <in/out> avl_tree_node &right_left - right's left child
+	      <in/out> avl_tree_node &right_right - right's right child
+              <in/out> fstream &binFile - binary input/output file
  * ***************************************************************************/
-
 void rotateWithRightChild(avl_tree_node &root, avl_tree_node &right,
 avl_tree_node &right_left, avl_tree_node &right_right, fstream &binFile)
 {
 	avl_tree_node temp;
-
+	
+	//Stores root variables before they get overwritten
 	temp.parent = root.parent;
 	temp.file_loc = root.file_loc;
 
+	//Allows us to swap right and root in the file
 	if(root.parent == -1)
 	{
-	root.file_loc = right.file_loc;
-	right.file_loc = temp.file_loc;	
+		root.file_loc = right.file_loc;
+		right.file_loc = temp.file_loc;	
 	
-	right_right.parent = right.file_loc;
-	binFile.seekp( C_NODE_SIZE * right_right.file_loc, ios::beg);
-	binFile.write( (char*) &right_right, C_NODE_SIZE);
+		right_right.parent = right.file_loc;
+		binFile.seekp( C_NODE_SIZE * right_right.file_loc, ios::beg);
+		binFile.write( (char*) &right_right, C_NODE_SIZE);
 	}
+
 
 	root.right_child = right_left.file_loc;
 	right_left.parent = root.file_loc;
@@ -393,8 +402,10 @@ avl_tree_node &right_left, avl_tree_node &right_right, fstream &binFile)
 	root.parent = right.file_loc;
 	right.parent = temp.parent;	
 
-	//writing of nodes
+	//Fixes Height
 	root.height = height(root, binFile);
+
+	//Write out nodes
 	binFile.seekp( C_NODE_SIZE * root.file_loc, ios::beg);
 	binFile.write( (char*) &root, C_NODE_SIZE);
 
@@ -402,55 +413,58 @@ avl_tree_node &right_left, avl_tree_node &right_right, fstream &binFile)
 	binFile.seekp( C_NODE_SIZE * right.file_loc, ios::beg);
 	binFile.write( (char*) &right, C_NODE_SIZE);
 
+	//If we need to write out right_left
 	if(right_left.file_loc != -1)
 	{
-	binFile.seekp( C_NODE_SIZE * right_left.file_loc, ios::beg);
-	binFile.write( (char*) &right_left, C_NODE_SIZE);
+		binFile.seekp( C_NODE_SIZE * right_left.file_loc, ios::beg);
+		binFile.write( (char*) &right_left, C_NODE_SIZE);
 	}
 
+	//Used to fix parent/children "pointers" if necessary
 	if(right.parent != -1)
 	{
-	binFile.seekp( C_NODE_SIZE * right.parent, ios::beg);
-	binFile.read( (char*) &temp, C_NODE_SIZE);
+		binFile.seekp( C_NODE_SIZE * right.parent, ios::beg);
+		binFile.read( (char*) &temp, C_NODE_SIZE);
 
-	temp.right_child = right.file_loc;
+		temp.right_child = right.file_loc;
 	
-	binFile.seekp( C_NODE_SIZE * temp.file_loc, ios::beg);
-	binFile.write( (char*) &temp, C_NODE_SIZE);
+		binFile.seekp( C_NODE_SIZE * temp.file_loc, ios::beg);
+		binFile.write( (char*) &temp, C_NODE_SIZE);
 	}
-
-	binFile.seekp( C_NODE_SIZE * 0, ios::beg);
-	binFile.read( (char*) &temp, C_NODE_SIZE);
-
-	avl_tree_node blah;
-
-	binFile.seekp( C_NODE_SIZE * temp.left_child, ios::beg);
-	binFile.read( (char*) &blah, C_NODE_SIZE);
-
-
-	binFile.seekp( C_NODE_SIZE * temp.right_child, ios::beg);
-	binFile.read( (char*) &blah, C_NODE_SIZE);
-
 }
 
 /*****************************************************************************
- *
- *
- *
- *
+ *Function: rotateWithLeftChild
+ *Author's: Christian Sieh
+ *Description: Takes the root supplied and puts it as root's left child's
+	       right child and updates all nodes accordingly. Also writes the
+	       nodes back to the file. This is an overloaded function that
+	       differs from the one about because it only rotates using two
+	       nodes.
+ *Parameters: <in/out> avl_tree_node &root - primary avl_node for building tree
+	      <in/out> avl_tree_node &left - root's left child
+	      <in/out> avl_tree_node &parent - the parent of root, used to 	
+		       update children.
+              <in/out> fstream &binFile - binary input/output file
  * ***************************************************************************/
 void rotateWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node &parent, fstream &binFile)
 {
 	avl_tree_node temp;
 
+	//Use temp to save variables we are overwriting
+	//Swap the parent of root and left
 	temp.parent = root.parent;
 	root.parent = left.file_loc;
 	left.parent = temp.parent;
-	//setting root.right_child to null, shoudl be correct
+
 	root.left_child = -1;
+
+	//Make root left's right child
 	left.right_child = root.file_loc;
 	parent.right_child = left.file_loc;
 
+	//Allows us to change the root of the tree and the left node's
+	//file locations
 	if(root.parent == -1)
 	{
 	temp.file_loc = root.file_loc;
@@ -466,9 +480,12 @@ void rotateWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node
 	
 	binFile.seekp( C_NODE_SIZE * parent.file_loc, ios::beg);
 	binFile.write( (char*) &parent, C_NODE_SIZE );
-
+	
+	//Correct the height for root and left
 	root.height = height(root, binFile);
+
 	left.height = height(left, binFile);
+
 	//writing of nodes
 	binFile.seekp( C_NODE_SIZE * root.file_loc, ios::beg);
 	binFile.write( (char*) &root, C_NODE_SIZE);
@@ -481,23 +498,37 @@ void rotateWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node
 }
 
 /*****************************************************************************
- *
- *
- *
- *
+ *Function: rotateWithRightChild
+ *Author's: Christian Sieh
+ *Description: Takes the root supplied and puts it as root's right child's
+	       left child and updates all nodes accordingly. Also writes the
+	       nodes back to the file. This is an overloaded function that
+	       differs from the one about because it only rotates using two
+	       nodes.
+ *Parameters: <in/out> avl_tree_node &root - primary avl_node for building tree
+	      <in/out> avl_tree_node &left - root's left child
+	      <in/out> avl_tree_node &parent - the parent of root, used to 	
+		       update children.
+              <in/out> fstream &binFile - binary input/output file
  * ***************************************************************************/
 void rotateWithRightChild(avl_tree_node &root, avl_tree_node &right, avl_tree_node &parent, fstream &binFile)
 {
 	avl_tree_node temp;
 
+	//Use temp to preserve variables we are overwriting
+	//Switch parent of root and right
 	temp.parent = root.parent;
 	root.parent = right.file_loc;
 	right.parent = temp.parent;
-	//setting root.right_child to null, shoudl be correct
+
 	root.right_child = -1;
+	
+	//Make root right's left child
 	right.left_child = root.file_loc;
 	parent.left_child = right.file_loc;
 
+	//This allows us to swap root and right child's location
+	//in the binary file if necessary
 	if(root.parent == -1)
 	{
 	temp.file_loc = root.file_loc;
@@ -514,6 +545,7 @@ void rotateWithRightChild(avl_tree_node &root, avl_tree_node &right, avl_tree_no
 	binFile.seekp( C_NODE_SIZE * parent.file_loc, ios::beg);
 	binFile.write( (char*) &parent, C_NODE_SIZE);
 	
+	//correct the height for root and right
 	root.height = height(root, binFile);
 
 	right.height = height(right, binFile);
@@ -530,32 +562,47 @@ void rotateWithRightChild(avl_tree_node &root, avl_tree_node &right, avl_tree_no
 }
 
 /*****************************************************************************
- *
- *
- *
- *
+ *Function: doubleWithLeftChild
+ *Author's: Christian Sieh
+ *Description: This function first calls rotateWithRightChild on root's left
+	       child to make sure it's children are in order and then
+	       rotateWithLeftChild is called on root to put root as it's left
+	       child's right child
+ *Parameters: <in/out> avl_tree_node &root - primary avl_node for building tree
+	      <in/out> avl_tree_node &left - root's left child
+	      <in/out> avl_tree_node &right - root's right child
+	      <in/out> avl_tree_node &left_right - left's right child
+	      <in/out> avl_tree_node &right_left - right's left child
+	      <in/out> avl_tree_node &left_left - left's left child
+              <in/out> fstream &binFile - binary input/output file
  * ***************************************************************************/
 void doubleWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node &right,
  avl_tree_node &left_right, avl_tree_node &right_left, avl_tree_node &left_left, fstream &binFile)
 {
-
-	//need to fix left_right_left issue
 	rotateWithRightChild(left, left_right, root, binFile);
 
 	rotateWithLeftChild(root, left_right, left_left, left, binFile);
 }
 
 /*****************************************************************************
- *
- *
- *
- *
+ *Function: doubleWithrightChild
+ *Author's: Christian Sieh
+ *Description: This function first calls rotateWithLeftChild on root's right
+	       child to make sure it's children are in order and then
+	       rotateWithRightChild is called on root to put root as it's right
+	       child's left child
+ *Parameters: <in/out> avl_tree_node &root - primary avl_node for building tree
+	      <in/out> avl_tree_node &left - root's left child
+	      <in/out> avl_tree_node &right - root's right child
+	      <in/out> avl_tree_node &left_right - left's right child
+	      <in/out> avl_tree_node &right_left - right's left child
+	      <in/out> avl_tree_node &right_right - right's right child
+              <in/out> fstream &binFile - binary input/output file
  * ***************************************************************************/
 void doubleWithRightChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node &right,
  avl_tree_node &left_right, avl_tree_node &right_left, avl_tree_node &right_right, fstream &binFile)
 
 {
-	//Need to fix right_left_right issue
 	rotateWithLeftChild(right, right_left, root, binFile);
 
 	rotateWithRightChild(root, right_left, right_right, right, binFile);
