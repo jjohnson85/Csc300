@@ -270,19 +270,48 @@ void rotateWithLeftChild(avl_tree_node &root, avl_tree_node &left,
 avl_tree_node &left_right, avl_tree_node &left_left, fstream &binFile)
 {
 	avl_tree_node temp;
-	cout << "Left 4 node!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
-	
+	cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Left 4 node!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
+/*
+	cout << "Root Parent: " << root.parent << endl;
+	cout << "Root Value: " << root.key_value << endl;
+	cout << "Root Left Child: " << root.left_child << endl;
+	cout << "Root Right Child: " << root.right_child << endl;
+	cout << "Root Location: " << root.file_loc << endl;
+	cout << "Root Height: " << root.height << endl << endl;
+
+	cout << "Left Parent: " << left.parent << endl;
+	cout << "Left Value: " << left.key_value << endl;
+	cout << "Left Left Child: " << left.left_child << endl;
+	cout << "Left Right Child: " << left.right_child << endl;
+	cout << "Left Location: " << left.file_loc << endl;
+	cout << "Left Height: " << left.height << endl << endl;
+
+	cout << "Left_Right Parent: " << left_right.parent << endl;
+	cout << "Left_Right Value: " << left_right.key_value << endl;
+	cout << "Left_Right Left Child: " << left_right.left_child << endl;
+	cout << "Left_Right Right Child: " << left_right.right_child << endl;
+	cout << "Left_Right Location: " << left_right.file_loc << endl;
+	cout << "Left_Right Height: " << left_right.height << endl << endl;
+
+	cout << "Left_Left Parent: " << left_left.parent << endl;
+	cout << "Left_Left Value: " << left_left.key_value << endl;
+	cout << "Left_Left Left Child: " << left_left.left_child << endl;
+	cout << "Left_Left Right Child: " << left_left.right_child << endl;
+	cout << "Left_Left Location: " << left_left.file_loc << endl;
+	cout << "Left_Left Height: " << left_left.height << endl << endl;
+*/	
 	temp.parent = root.parent;
 	temp.file_loc = root.file_loc;
 
 	if(root.parent == -1)
 	{
-	root.file_loc = left.file_loc;
-	left.file_loc = temp.file_loc;	
+	//	cout << "HERE!" << endl;
+		root.file_loc = left.file_loc;
+		left.file_loc = temp.file_loc;	
 	
-	left_left.parent = left.file_loc;
-	binFile.seekp( C_NODE_SIZE * left_left.file_loc, ios::beg);
-	binFile.write( (char*) &left_left, C_NODE_SIZE);
+		left_left.parent = left.file_loc;
+		binFile.seekp( C_NODE_SIZE * left_left.file_loc, ios::beg);
+		binFile.write( (char*) &left_left, C_NODE_SIZE);
 	}
 
 	root.left_child = left_right.file_loc;
@@ -293,38 +322,88 @@ avl_tree_node &left_right, avl_tree_node &left_left, fstream &binFile)
 
 	//writing of nodes
 	root.height = height(root, binFile);
-	cout << "ROOT FILE LOC: " << root.file_loc;
-	cout << "ROOT VALUE: " << root.key_value;
-
+	
 	binFile.seekp( C_NODE_SIZE * root.file_loc, ios::beg);
 	binFile.write( (char*) &root, C_NODE_SIZE);
 
-	cout << "LEFT FILE LOC: " << left.file_loc;
-	cout << "LEFT VALUE: " << left.key_value;
-	
+	//cout << "READING" << endl;
+
+	binFile.seekp( C_NODE_SIZE * root.file_loc, ios::beg);
+	binFile.write( (char*) &root, C_NODE_SIZE);
+	/*
+	cout << "TESTING READING" << endl;
+	cout << "Root Parent: " << root.parent << endl;
+	cout << "Root Value: " << root.key_value << endl;
+	cout << "Root Left Child: " << root.left_child << endl;
+	cout << "Root Right Child: " << root.right_child << endl;
+	cout << "Root Location: " << root.file_loc << endl;
+	cout << "Root Height: " << root.height << endl << endl;
+*/
 	binFile.seekp( C_NODE_SIZE * left.file_loc, ios::beg);
 	binFile.write( (char*) &left, C_NODE_SIZE);
 
 	if(left_right.file_loc != -1)
 	{
-	binFile.seekp( C_NODE_SIZE * left_right.file_loc, ios::beg);
-	binFile.write( (char*) &left_right, C_NODE_SIZE);
+		binFile.seekp( C_NODE_SIZE * left_right.file_loc, ios::beg);
+		binFile.write( (char*) &left_right, C_NODE_SIZE);
 	}
-
-	cout << "LEFT PARENT!!!!!!!: " << left.parent << endl;
+	
+	//cout << "LEFT PARENT: " << left.parent << endl;
 	if(left.parent != -1)
 	{
-	binFile.seekp( C_NODE_SIZE * left.parent, ios::beg);
-	binFile.read( (char*) &temp, C_NODE_SIZE);
+		binFile.seekp( C_NODE_SIZE * left.parent, ios::beg);
+		binFile.read( (char*) &temp, C_NODE_SIZE);
 
-	temp.left_child = left.file_loc;
-	
-	binFile.seekp( C_NODE_SIZE * temp.file_loc, ios::beg);
-	binFile.write( (char*) &temp, C_NODE_SIZE);
+		temp.left_child = left.file_loc;
+
+		binFile.seekp( C_NODE_SIZE * temp.file_loc, ios::beg);
+		binFile.write( (char*) &temp, C_NODE_SIZE);
 	}
+	
+	cout << "Left Parent: " << left.parent << endl;
+	cout << "Left Value: " << left.key_value << endl;
+	cout << "Left Left Child: " << left.left_child << endl;
+	cout << "Left Right Child: " << left.right_child << endl;
+	cout << "Left Location: " << left.file_loc << endl;
+	cout << "Left Height: " << left.height << endl << endl;
 
-	binFile.seekp( C_NODE_SIZE * 0, ios::beg);
-	binFile.read( (char*) &temp, C_NODE_SIZE);
+	binFile.seekp( C_NODE_SIZE * left.file_loc, ios::beg);
+	binFile.write( (char*) &left, C_NODE_SIZE);
+
+	cout << "Left Parent: " << left.parent << endl;
+	cout << "Left Value: " << left.key_value << endl;
+	cout << "Left Left Child: " << left.left_child << endl;
+	cout << "Left Right Child: " << left.right_child << endl;
+	cout << "Left Location: " << left.file_loc << endl;
+	cout << "Left Height: " << left.height << endl << endl;
+
+	binFile.seekp( C_NODE_SIZE * left.file_loc, ios::beg);
+	binFile.read( (char*) &left, C_NODE_SIZE);
+
+	cout << "Left Parent: " << temp.parent << endl;
+	cout << "Left Value: " << temp.key_value << endl;
+	cout << "Left Left Child: " << temp.left_child << endl;
+	cout << "Left Right Child: " << temp.right_child << endl;
+	cout << "Left Location: " << temp.file_loc << endl;
+	cout << "Left Height: " << temp.height << endl << endl;
+
+
+
+/*
+	cout << "Root Parent: " << root.parent << endl;
+	cout << "Root Value: " << root.key_value << endl;
+	cout << "Root Left Child: " << root.left_child << endl;
+	cout << "Root Right Child: " << root.right_child << endl;
+	cout << "Root Location: " << root.file_loc << endl;
+	cout << "Root Height: " << root.height << endl << endl;
+
+	cout << "Left Parent: " << left.parent << endl;
+	cout << "Left Value: " << left.key_value << endl;
+	cout << "Left Left Child: " << left.left_child << endl;
+	cout << "Left Right Child: " << left.right_child << endl;
+	cout << "Left Location: " << left.file_loc << endl;
+	cout << "Left Height: " << left.height << endl << endl;
+
 
 	avl_tree_node blah;
 
@@ -350,7 +429,8 @@ avl_tree_node &left_right, avl_tree_node &left_left, fstream &binFile)
 	cout << "Right Value: " << blah.key_value << endl;
 	cout << "Right Parent: " << blah.parent << endl;	
 	cout << "Right Left Child: " << blah.left_child << endl;
-	cout << "Right Right Child: " << blah.right_child << endl;
+	cout << "Right Right Child: " << blah.right_child << endl << endl << endl;
+*/
 }
 
 void rotateWithRightChild(avl_tree_node &root, avl_tree_node &right,
@@ -604,9 +684,32 @@ void rotateWithRightChild(avl_tree_node &root, avl_tree_node &right, avl_tree_no
 void doubleWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node &right,
  avl_tree_node &left_right, avl_tree_node &right_left, avl_tree_node &left_left, fstream &binFile)
 {
-	//need to fix left_right_left issue
+	avl_tree_node temp;
+
 	rotateWithRightChild(left, left_right, root, binFile);
-	
+
+	temp = left;
+	left = left_right;
+	left_left = temp;
+	left_right.file_loc = -1;
+	left_right.height = -1;
+	left_right.key_value = 0;
+	left_right.parent = -1118501760;
+
+	binFile.seekp( C_NODE_SIZE * root.file_loc, ios::beg);
+	binFile.write( (char*) &root, C_NODE_SIZE);
+
+	binFile.seekp( C_NODE_SIZE * left.file_loc, ios::beg);
+	binFile.write( (char*) &left, C_NODE_SIZE);
+
+	binFile.seekp( C_NODE_SIZE * left_left.file_loc, ios::beg);
+	binFile.write( (char*) &left_left, C_NODE_SIZE);
+
+	binFile.seekp( C_NODE_SIZE * left_right.file_loc, ios::beg);
+	binFile.write( (char*) &left_right, C_NODE_SIZE);
+
+
+
 	cout << "Root Parent: " << root.parent << endl;
 	cout << "Root Value: " << root.key_value << endl;
 	cout << "Root Left Child: " << root.left_child << endl;
@@ -641,8 +744,6 @@ void doubleWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node
 	cout << "Left_Left Right Child: " << left_left.right_child << endl;
 	cout << "Left_Left Location: " << left_left.file_loc << endl;
 	cout << "Left_Left Height: " << left_left.height << endl << endl;
-
-
 
 	rotateWithLeftChild(root, left, left_right, left_left, binFile);
 }
