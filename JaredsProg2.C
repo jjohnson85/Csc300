@@ -465,6 +465,7 @@ void rotateWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node
 	//setting root.right_child to null, shoudl be correct
 	root.left_child = -1;
 	left.right_child = root.file_loc;
+	parent.right_child = left.file_loc;
 
 	if(root.parent == -1)
 	{
@@ -479,6 +480,9 @@ void rotateWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node
 	binFile.seekp( C_NODE_SIZE * left.file_loc, ios::beg);
 	binFile.write( (char*) &left, C_NODE_SIZE);
 	
+	binFile.seekp( C_NODE_SIZE * parent.file_loc, ios::beg);
+	binFile.write( (char*) &parent, C_NODE_SIZE );
+
 	root.height = height(root, binFile);
 
 	cout << "Root Parent: " << root.parent << endl;
@@ -517,6 +521,9 @@ void rotateWithLeftChild(avl_tree_node &root, avl_tree_node &left, avl_tree_node
 
 	binFile.seekp( C_NODE_SIZE * left.file_loc, ios::beg);
 	binFile.write( (char*) &left, C_NODE_SIZE);
+
+	binFile.seekp( C_NODE_SIZE * parent.file_loc, ios::beg);
+	binFile.write( (char*) &parent, C_NODE_SIZE);
 }
 
 
@@ -668,7 +675,46 @@ void doubleWithRightChild(avl_tree_node &root, avl_tree_node &left, avl_tree_nod
 {
 	//Need to fix right_left_right issue
 	rotateWithLeftChild(right, right_left, root, binFile);
-	rotateWithRightChild(root, right, right_left, right_right, binFile);
+	
+	cout << "---------------*******************--------------------------------------" << endl;	
+	cout << "Root Parent: " << root.parent << endl;
+	cout << "Root Value: " << root.key_value << endl;
+	cout << "Root Left Child: " << root.left_child << endl;
+	cout << "Root Right Child: " << root.right_child << endl;
+	cout << "Root Location: " << root.file_loc << endl;
+	cout << "Root Height: " << root.height << endl;
+
+	cout << "Left Parent: " << left.parent << endl;
+	cout << "Left Value: " << left.key_value << endl;
+	cout << "Left Left Child: " << left.left_child << endl;
+	cout << "Left Right Child: " << left.right_child << endl;
+	cout << "Left Location: " << left.file_loc << endl;
+	cout << "Left Height: " << left.height << endl << endl;
+
+	cout << "Right Parent: " << right.parent << endl;
+	cout << "Right Value: " << right.key_value << endl;
+	cout << "Right Left Child: " << right.left_child << endl;
+	cout << "Right Right Child: " << right.right_child << endl;
+	cout << "Right Location: " << right.file_loc << endl;
+	cout << "Right Height: " << right.height << endl << endl;
+
+	cout << "Left_Right Parent: " << left_right.parent << endl;
+	cout << "Left_Right Value: " << left_right.key_value << endl;
+	cout << "Left_Right Left Child: " << left_right.left_child << endl;
+	cout << "Left_Right Right Child: " << left_right.right_child << endl;
+	cout << "Left_Right Location: " << left_right.file_loc << endl;
+	cout << "Left_Right Height: " << left_right.height << endl << endl;
+
+	cout << "Right_Left Parent: " << right_left.parent << endl;
+	cout << "Right_Left Value: " << right_left.key_value << endl;
+	cout << "Right_Left Left Child: " << right_left.left_child << endl;
+	cout << "right_Left Right Child: " << right_left.right_child << endl;
+	cout << "rigt_Left Location: " << right_left.file_loc << endl;
+	cout << "rtiong_Left Height: " << right_left.height << endl << endl;
+
+	cout << " -----------***********************************----------------------------------- " << endl;
+
+	rotateWithRightChild(root, right_left, right_right, right, binFile);
 }
 
 //Recursively write node records to the binary file
