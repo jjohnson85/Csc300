@@ -5,14 +5,16 @@
 #include<fstream>
 #include<time.h>
 #include<algorithm>
+#include<list>
+#include<cmath>
+#include<iterator>
+#include<vector>
 
 using namespace std;
 
 void radixSort( int *arry, int size );
 void bubbleSort( int *arry, int size );
-void allocate( int* arry, int size );
-void cpyArry( int *arryOne, int *arryTwo, int size );
-void insert( int* arry, int size);
+void insertionSort( list<int> &subList );
 
 /*****************************************************************************
  *Function: main
@@ -24,8 +26,9 @@ int main( int argc, char *argv[] )
 {
 int *arryOne;
 int *arryTwo;
-int arryThree[1000];
-time_t timer;
+int *arryThree;
+time_t timerStart;
+time_t timerEnd;
 int val;
 int i = 1;
 int counter = 0;
@@ -46,84 +49,64 @@ while(inp >> val)
 	counter++;
 }
 inp.close();
+
+//Reopen file (until I can figure out why I cant seem to seek to the beggining)
 inp.open(argv[1], ios::in);
+
 cout << counter << endl;
 cout << inp.tellg( ) << endl;
 
-//allcate two arrays of the appropriate size
+//allcate arrays of the appropriate size
 arryOne = new int[counter+1];
 arryTwo = new int[counter+1];
-//allocate(arryThree, counter + 1);
+arryThree = new int[counter+1];
 
 
-//insert values from files into both arrays
+//insert values from files into all arrays
 while( inp >> val)
 {
 
 	arryOne[i] = val;
 	arryTwo[i] = val;
-//	arryThree[i] = val;
+	arryThree[i] = val;
 
 	i++;
 }
 inp.close();
 
-//DEBUG
-for(i=0; i< 1000; i++)
-{
-	arryThree[i] = 1000-i;
-}
 
 //sort list One with bubble sort
-timer = 0;
+timerStart = time(NULL);
 bubbleSort(arryOne, counter);
-cout << "Timer for Bubble Sort: " << timer << endl;
+timerEnd = time(NULL);
+cout << "Timer for Bubble Sort: " << timerEnd - timerStart << endl;
 
 //sort list Two with radix sort
-timer = 0;
+timerStart = time(NULL);
 radixSort(arryTwo, counter);
-cout << "Time for Radix Sort: " << timer << endl;
+timerEnd = time(NULL);
+cout << "Time for Radix Sort: " << timerEnd - timerStart << endl;
 
 //sort list Three with std sort
-timer = 0;
-sort(arryThree, arryThree+1000);
-cout << "Timer for STL sort: " << timer << endl;
+timerStart = time(NULL);
+sort(arryThree, arryThree+counter+1);
+timerEnd = time(NULL);
+cout << "Timer for STL sort: " << timerEnd - timerStart << endl;
+
+//DEBUG TO CHECK ORDER
+/*
+for( i = 0; i<=counter; i++)
+{
+
+cout << arryThree[i] << "\t" << arryTwo[i] << "\t" << arryOne[i] << endl;
+}
+*/
 
 //End Program
 delete [] arryOne;
 delete [] arryTwo;
+delete [] arryThree;
 return 0;
-}
-
-/*****************************************************************************
- *Function: allocate
- *Author: Jared Johnson
- *Description: Allocates a new array of the desired size, determined by the
-size parmeter.
- *Parameters: <in/out> int *arry - integer pointer to the start of the array
-              <in> int size - size to make the array
- * ***************************************************************************/
-void allocate( int *arry, int size )
-{
-
-arry = new int[size];
-
-
-}
-
-/*****************************************************************************
- *Function: cypArry
- *Author: Jared Johnson
- *Description: Function to copy array one into array two
- *Parameters: <in/out> - int *arryOne - integer pointer to the start of the
-array to copy
-              <in/out> - int *arryTwo - integer pointer to the start of the 
-array to be copied into
- *****************************************************************************/
-void cpyArry( int *arryOne, int *arryTwo, int size )
-{
-
-
 }
 
 /*****************************************************************************
@@ -134,9 +117,28 @@ void cpyArry( int *arryOne, int *arryTwo, int size )
  * ***************************************************************************/
 void radixSort( int *arry, int size )
 {
+list<int> radixSub;
+vector<list<int> > radixList;
+list<int>::iterator subit;
+vector<list<int> >::iterator it = radixList.begin();
+int loc;
+int i = 0;
+int step = 1;
+int key;
 
+//initialize radixList vector with empty lists
+for( i = 0; i < 256; i++ )
+{
+	radixList.push_back(radixSub);
+}
 
-
+//insert values in arry into their respective lists for radix sort
+for( i = 0; i < size; i++)
+{
+	//calculate which list the current number in the array goes into
+	loc =(int)(arry[i]/pow(256, step)) % 256;
+	radixList[loc].push_back(arry[i]);
+}
 
 }
 
@@ -148,11 +150,29 @@ void radixSort( int *arry, int size )
  * ***************************************************************************/
 void bubbleSort( int *arry, int size )
 {
+int i = 0;
+int temp = 0;
 
+while( size != 0 )
+{
+	for( i=0; i < size; i++ )
+	{
+	
+		if(arry[i] > arry[i+1])
+		{
+			temp = arry[i];
+			arry[i] = arry[i+1];
+			arry[i+1] = temp;
+		}		
 
+	}
+	size--;
+}
+}
+
+void insertionSort( list<int> &subList )
+{
 
 
 
 }
-
-
