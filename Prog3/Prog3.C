@@ -14,7 +14,6 @@ using namespace std;
 
 void radixSort( int *arry, int size );
 void bubbleSort( int *arry, int size );
-void insertionSort( list<int> &subList );
 
 /*****************************************************************************
  *Function: main
@@ -124,7 +123,8 @@ vector<list<int> >::iterator it = radixList.begin();
 int loc;
 int i = 0;
 int step = 1;
-int key;
+int maxDigits = 0;
+int max = 0;
 
 //initialize radixList vector with empty lists
 for( i = 0; i < 256; i++ )
@@ -132,14 +132,40 @@ for( i = 0; i < 256; i++ )
 	radixList.push_back(radixSub);
 }
 
-//insert values in arry into their respective lists for radix sort
-for( i = 0; i < size; i++)
+while( step <= maxDigits || maxDigits == 0 )
 {
-	//calculate which list the current number in the array goes into
-	loc =(int)(arry[i]/pow(256, step)) % 256;
-	radixList[loc].push_back(arry[i]);
-}
-
+	//insert values in arry into their respective lists for radix sort
+	for( i = 0; i < size; i++)
+	{
+		//calculate which list the current number in the array goes into
+		loc =(int)(arry[i]/pow(256, step)) % 256;
+		radixList[loc].push_back(arry[i]);
+	
+		//On the first pass only
+		if( step == 1 )
+		{
+			//determine largest value
+			if( max < arry[i] )
+			{
+				max = arry[i];
+			}	
+		}
+	}
+	
+	//After the first pass only
+	if( step == 1 )
+	{
+		//Calculate the max number of base 256 digits
+		while( max != 0 )
+		{
+			max /= 256;
+			maxDigits++;
+		}
+	}
+	
+	//Increment Step
+	step++;
+}	
 }
 
 /*****************************************************************************
@@ -170,9 +196,3 @@ while( size != 0 )
 }
 }
 
-void insertionSort( list<int> &subList )
-{
-
-
-
-}
