@@ -26,6 +26,7 @@ int main( int argc, char *argv[] )
 int *arryOne;
 int *arryTwo;
 int *arryThree;
+int *arryFour;
 time_t timerStart;
 time_t timerEnd;
 int val;
@@ -59,7 +60,7 @@ cout << inp.tellg( ) << endl;
 arryOne = new int[counter+1];
 arryTwo = new int[counter+1];
 arryThree = new int[counter+1];
-
+arryFour = new int[counter+1];
 
 //insert values from files into all arrays
 while( inp >> val)
@@ -68,6 +69,7 @@ while( inp >> val)
 	arryOne[i] = val;
 	arryTwo[i] = val;
 	arryThree[i] = val;
+	arryFour[i] = val;
 
 	i++;
 }
@@ -82,7 +84,7 @@ cout << "Timer for Bubble Sort: " << timerEnd - timerStart << endl;
 
 //sort list Two with radix sort
 timerStart = time(NULL);
-radixSort(arryTwo, counter);
+radixSort(arryTwo, counter+1);
 timerEnd = time(NULL);
 cout << "Time for Radix Sort: " << timerEnd - timerStart << endl;
 
@@ -93,18 +95,19 @@ timerEnd = time(NULL);
 cout << "Timer for STL sort: " << timerEnd - timerStart << endl;
 
 //DEBUG TO CHECK ORDER
-/*
+
 for( i = 0; i<=counter; i++)
 {
 
 cout << arryThree[i] << "\t" << arryTwo[i] << "\t" << arryOne[i] << endl;
 }
-*/
+
 
 //End Program
 delete [] arryOne;
 delete [] arryTwo;
 delete [] arryThree;
+delete [] arryFour;
 return 0;
 }
 
@@ -121,6 +124,7 @@ vector<list<int> > radixList;
 list<int>::iterator subit;
 vector<list<int> >::iterator it = radixList.begin();
 int loc;
+int j = 0;
 int i = 0;
 int step = 1;
 int maxDigits = 0;
@@ -134,6 +138,7 @@ for( i = 0; i < 256; i++ )
 
 while( step <= maxDigits || maxDigits == 0 )
 {
+	j = 0;
 	//insert values in arry into their respective lists for radix sort
 	for( i = 0; i < size; i++)
 	{
@@ -165,6 +170,23 @@ while( step <= maxDigits || maxDigits == 0 )
 	
 	//Increment Step
 	step++;
+	
+	//write values back into list
+	for( i = 0; i < 256; i++ )
+	{
+	
+		//Sort the sublists (STL temp)
+		radixList[i].sort( );
+		
+		for( j ; radixList[i].size( ) != 0; j++ )
+		{
+			arry[j] = radixList[i].front( );
+			cout << "Writing from List: "<< i << " : "
+			 << radixList[i].front() <<
+			" Over: " << arry[j] << endl;
+			radixList[i].pop_front( );
+		}
+	}
 }	
 }
 
