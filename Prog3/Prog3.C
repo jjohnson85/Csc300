@@ -96,7 +96,7 @@ cout << "Timer for STL sort: " << timerEnd - timerStart << endl;
 
 //DEBUG TO CHECK ORDER
 
-for( i = 0; i<=counter; i++)
+for( i = 0; i<=10; i++)
 {
 
 cout << arryThree[i] << "\t" << arryTwo[i] << "\t" << arryOne[i] << endl;
@@ -136,7 +136,7 @@ for( i = 0; i < 256; i++ )
 	radixList.push_back(radixSub);
 }
 
-while( step <= maxDigits || maxDigits == 0 )
+while( step <= 4 )
 {
 	j = 0;
 	//insert values in arry into their respective lists for radix sort
@@ -146,6 +146,7 @@ while( step <= maxDigits || maxDigits == 0 )
 		loc =(int)(arry[i]/pow(256, step)) % 256;
 		radixList[loc].push_back(arry[i]);
 	
+		/*
 		//On the first pass only
 		if( step == 1 )
 		{
@@ -155,8 +156,10 @@ while( step <= maxDigits || maxDigits == 0 )
 				max = arry[i];
 			}	
 		}
+		*/
 	}
 	
+	/*
 	//After the first pass only
 	if( step == 1 )
 	{
@@ -167,6 +170,7 @@ while( step <= maxDigits || maxDigits == 0 )
 			maxDigits++;
 		}
 	}
+	*/
 	
 	//Increment Step
 	step++;
@@ -174,10 +178,7 @@ while( step <= maxDigits || maxDigits == 0 )
 	//write values back into list
 	for( i = 0; i < 256; i++ )
 	{
-	
-		//Sort the sublists (STL temp)
-	//	radixList[i].sort( );
-		
+			
 		for( j ; radixList[i].size( ) != 0; j++ )
 		{
 			arry[j] = radixList[i].front( );
@@ -199,9 +200,10 @@ while( step <= maxDigits || maxDigits == 0 )
 void bubbleSort( int *arry, int size )
 {
 int i = 0;
+int n = 0;
 int temp = 0;
 
-while( size != 0 )
+while( n != size )
 {
 	for( i=0; i < size; i++ )
 	{
@@ -214,7 +216,7 @@ while( size != 0 )
 		}		
 
 	}
-	size--;
+	n++;
 }
 }
 
