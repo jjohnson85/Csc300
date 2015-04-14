@@ -14,6 +14,8 @@ using namespace std;
 
 void radixSort( int *arry, int size );
 void bubbleSort( int *arry, int size );
+void heapsort( int *arry, int size );
+void siftdown( );
 
 /*****************************************************************************
  *Function: main
@@ -93,6 +95,12 @@ timerStart = time(NULL);
 sort(arryThree, arryThree+counter+1);
 timerEnd = time(NULL);
 cout << "Timer for STL sort: " << timerEnd - timerStart << endl;
+
+//sort list Four with heapsort
+timerStart = time(NULL);
+heapsort(arryFour, counter+1);
+timerEnd = time(NULL);
+cout << "Time for Heapsort: " << timerEnd - timerStart << endl;
 
 //DEBUG TO CHECK ORDER
 
@@ -218,6 +226,28 @@ while( n != size )
 	}
 	n++;
 }
+}
+
+/*****************************************************************************
+ *Function: Heapsort
+ *Author: Christian Sieh
+ *Description: 
+ *Parameters:
+ * ***************************************************************************/
+void heapsort( int *arry, int size)
+{
+
+}
+
+/*****************************************************************************
+ *Function: Siftdown
+ *Author:
+ *Description:
+ *Parameters:
+ * ***************************************************************************/
+void siftdown()
+{
+
 }
 
 /*****************************************************************************
