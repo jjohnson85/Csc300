@@ -126,7 +126,7 @@ vector<list<int> >::iterator it = radixList.begin();
 int loc;
 int j = 0;
 int i = 0;
-int step = 1;
+int step = 0;
 int maxDigits = 0;
 int max = 0;
 
@@ -176,14 +176,14 @@ while( step <= maxDigits || maxDigits == 0 )
 	{
 	
 		//Sort the sublists (STL temp)
-		radixList[i].sort( );
+	//	radixList[i].sort( );
 		
 		for( j ; radixList[i].size( ) != 0; j++ )
 		{
 			arry[j] = radixList[i].front( );
-			cout << "Writing from List: "<< i << " : "
-			 << radixList[i].front() <<
-			" Over: " << arry[j] << endl;
+		//	cout << "Writing from List: "<< i << " : "
+		//	 << radixList[i].front() <<
+		//	" Over: " << arry[j] << endl;
 			radixList[i].pop_front( );
 		}
 	}
@@ -218,3 +218,9 @@ while( size != 0 )
 }
 }
 
+/*****************************************************************************
+ *Function: convertBase
+ *Author:
+ *Description:
+ *Parameters:
+ * *******/
