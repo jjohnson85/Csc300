@@ -5,7 +5,7 @@
 #include<fstream>
 #include<time.h>
 #include<algorithm>
-#include<list>
+#include<queue>
 #include<cmath>
 #include<iterator>
 #include<vector>
@@ -127,22 +127,16 @@ return 0;
  * ***************************************************************************/
 void radixSort( int *arry, int size )
 {
-list<int> radixSub;
-vector<list<int> > radixList;
-list<int>::iterator subit;
-vector<list<int> >::iterator it = radixList.begin();
+vector<queue<int> > radixList;
 int loc;
 int j = 0;
 int i = 0;
 int step = 0;
 int maxDigits = 0;
 int max = 0;
+long int stepFactor = 1;
 
-//initialize radixList vector with empty lists
-for( i = 0; i < 256; i++ )
-{
-	radixList.push_back(radixSub);
-}
+radixList.resize(256);
 
 while( step <= 4 )
 {
@@ -151,9 +145,9 @@ while( step <= 4 )
 	for( i = 0; i < size; i++)
 	{
 		//calculate which list the current number in the array goes into
-		loc =(int)(arry[i]/pow(256, step)) % 256;
-		radixList[loc].push_back(arry[i]);
-	
+		loc =(int)(arry[i]/stepFactor) % 256;
+		radixList[loc].push(arry[i]);
+	//	cout << "Pushing: " << arry[i] << " To: "<< loc << endl;
 		/*
 		//On the first pass only
 		if( step == 1 )
@@ -182,7 +176,7 @@ while( step <= 4 )
 	
 	//Increment Step
 	step++;
-	
+	stepFactor *= 256;
 	//write values back into list
 	for( i = 0; i < 256; i++ )
 	{
@@ -190,10 +184,10 @@ while( step <= 4 )
 		for( j ; radixList[i].size( ) != 0; j++ )
 		{
 			arry[j] = radixList[i].front( );
-		//	cout << "Writing from List: "<< i << " : "
-		//	 << radixList[i].front() <<
-		//	" Over: " << arry[j] << endl;
-			radixList[i].pop_front( );
+	//		cout << "Writing from List: "<< i << " : "
+	//		 << radixList[i].front() <<
+	//		" Over: " << arry[j] << endl;
+			radixList[i].pop( );
 		}
 	}
 }	
