@@ -15,7 +15,7 @@ using namespace std;
 void radixSort( int *arry, int size );
 void bubbleSort( int *arry, int size );
 void heapsort( int *arry, int size );
-void siftdown( );
+void siftdown( int *arry, int i, int n);
 
 /*****************************************************************************
  *Function: main
@@ -107,7 +107,7 @@ cout << "Time for Heapsort: " << timerEnd - timerStart << endl;
 for( i = 0; i<=10; i++)
 {
 
-cout << arryThree[i] << "\t" << arryTwo[i] << "\t" << arryOne[i] << endl;
+cout << arryFour[i] << "\t" << arryThree[i] << "\t" << arryTwo[i] << "\t" << arryOne[i] << endl;
 }
 
 
@@ -230,8 +230,20 @@ while( n != size )
  * ***************************************************************************/
 void heapsort( int *arry, int size)
 {
-
+	for( int i = size / 2 - 1; i >= 0; --i)
+		siftdown(arry, i, size);
+	for( int j = size - 1; j > 0; --j)
+	{
+		swap( arry[0], arry[j] );
+		siftdown( arry, 0, j);
+	}
 }
+
+inline int leftChild( int i )
+{
+	return 2 * i + 1;
+}
+
 
 /*****************************************************************************
  *Function: Siftdown
@@ -239,9 +251,22 @@ void heapsort( int *arry, int size)
  *Description:
  *Parameters:
  * ***************************************************************************/
-void siftdown()
+void siftdown(int *arry, int i, int n)
 {
-
+	int child;
+	int tmp;
+	
+	for(tmp = arry[i]; leftChild(i) < n; i = child)
+	{
+		child = leftChild(i);
+		if( child != n-1 && arry[child] < arry[child+1])
+			++child;
+		if(tmp < arry[child])
+			arry[i] = arry[child];
+		else
+			break;
+	}
+	arry[i] = tmp;
 }
 
 /*****************************************************************************
