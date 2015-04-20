@@ -138,7 +138,7 @@ long int stepFactor = 1;
 
 radixList.resize(256);
 
-while( step <= 4 )
+while( step <= maxDigits || maxDigits == 0 )
 {
 	j = 0;
 	//insert values in arry into their respective lists for radix sort
@@ -148,7 +148,7 @@ while( step <= 4 )
 		loc =(int)(arry[i]/stepFactor) % 256;
 		radixList[loc].push(arry[i]);
 	//	cout << "Pushing: " << arry[i] << " To: "<< loc << endl;
-		/*
+		
 		//On the first pass only
 		if( step == 1 )
 		{
@@ -158,10 +158,10 @@ while( step <= 4 )
 				max = arry[i];
 			}	
 		}
-		*/
+		
 	}
 	
-	/*
+	
 	//After the first pass only
 	if( step == 1 )
 	{
@@ -172,7 +172,7 @@ while( step <= 4 )
 			maxDigits++;
 		}
 	}
-	*/
+	
 	
 	//Increment Step
 	step++;
@@ -204,9 +204,19 @@ void bubbleSort( int *arry, int size )
 int i = 0;
 int n = 0;
 int temp = 0;
+time_t start;
+time_t end;
 
+
+start = time(NULL);
 while( n != size )
 {
+	end = time(NULL);
+	if( end - start > 10 )
+	{
+		cout << "Bubble Sort time greater than 10s " << endl;
+		return;
+	}
 	for( i=0; i < size; i++ )
 	{
 	
