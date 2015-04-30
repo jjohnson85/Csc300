@@ -4,7 +4,10 @@
  *Class: CSC 300, Data Structures
  *Instructor: Dr. Edward Corwin
  *Date: 5/1/2015
- *Description:
+ *Description: This program takes in a text file consisting of interger values
+		it then reads all of these values into an array and creates
+		3 copies of that array. A Bubble Sort, Radix Sort, and
+		Heapsort is then run on each of these different arrays. 
  *Input: Integers from a text file ex: numbers.txt
  *Output: 
  *Usage:
@@ -39,12 +42,13 @@ int *arryOne;
 int *arryTwo;
 int *arryThree;
 int *arryFour;
-time_t timerStart;
-time_t timerEnd;
+clock_t timer;
 int val;
 int i = 1;
 int counter = 0;
 fstream inp;
+cout.setf(ios::fixed, ios::floatfield);
+cout.setf(ios::showpoint);
 
 //Open the first argument for input
 inp.open(argv[1], ios::in);
@@ -65,7 +69,7 @@ inp.close();
 //Reopen file (until I can figure out why I cant seem to seek to the beggining)
 inp.open(argv[1], ios::in);
 
-cout << counter << endl;
+cout << "Number of values: " << counter << endl;
 cout << inp.tellg( ) << endl;
 
 //allcate arrays of the appropriate size
@@ -89,28 +93,28 @@ inp.close();
 
 
 //sort list One with bubble sort
-timerStart = time(NULL);
+timer = clock();
 bubbleSort(arryOne, counter);
-timerEnd = time(NULL);
-cout << "Timer for Bubble Sort: " << timerEnd - timerStart << endl;
+timer = clock() - timer;
+cout << "Timer for Bubble Sort: " << ((float)timer)/CLOCKS_PER_SEC << endl;
 
 //sort list Two with radix sort
-timerStart = time(NULL);
+timer = clock();
 radixSort(arryTwo, counter+1);
-timerEnd = time(NULL);
-cout << "Time for Radix Sort: " << timerEnd - timerStart << endl;
+timer = clock() - timer;
+cout << "Time for Radix Sort: " << ((float)timer)/CLOCKS_PER_SEC << endl;
 
 //sort list Three with std sort
-timerStart = time(NULL);
+timer = clock();
 sort(arryThree, arryThree+counter+1);
-timerEnd = time(NULL);
-cout << "Timer for STL sort: " << timerEnd - timerStart << endl;
+timer = clock() - timer;
+cout << "Timer for STL sort: " << ((float)timer)/CLOCKS_PER_SEC << endl;
 
 //sort list Four with heapsort
-timerStart = time(NULL);
+timer = clock();
 heapsort(arryFour, counter+1);
-timerEnd = time(NULL);
-cout << "Time for Heapsort: " << timerEnd - timerStart << endl;
+timer = clock() - timer;
+cout << "Time for Heapsort: " << ((float)timer)/CLOCKS_PER_SEC << endl;
 
 //DEBUG TO CHECK ORDER
 
@@ -252,12 +256,12 @@ while( n != size )
  * ***************************************************************************/
 void heapsort( int *arry, int size)
 {
-	//
+	//Build Heap
 	for( int i = size / 2 - 1; i >= 0; --i)
 		siftdown(arry, i, size);
-	//
+	//Delete Max
 	for( int j = size - 1; j > 0; --j)
-	{
+	{		
 		swap( arry[0], arry[j] );
 		siftdown( arry, 0, j);
 	}
@@ -273,10 +277,13 @@ inline int leftChild( int i )
 /*****************************************************************************
  *Function: Siftdown
  *Author: Christian Sieh
- *Description:
+ *Description: This function fixes the heap after we move a value. It starts
+		at i and uses that as the root. The function then repairs
+		down from there.
  *Parameters:
 	     int *arry - The array that holds all the numbers to be sorted
-	     int i - The iterator from the function heapsort
+	     int i - The iterator from the function heapsort. Used as root
+			of tree that needs to be repaired
 	     int size - The size of the array
  * ***************************************************************************/
 void siftdown(int *arry, int i, int size)
