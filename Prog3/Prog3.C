@@ -119,12 +119,32 @@ heapsort(arryFour, counter+1);
 timer = clock() - timer;
 cout << "Time for Heapsort: " << ((float)timer)/CLOCKS_PER_SEC << endl;
 
-//DEBUG TO CHECK ORDER
-
+//bubblesort output
+cout << "bubblesort:" << endl;
 for( i = 0; i<=10; i++)
 {
+	cout << "\t" << arryOne[i] << endl;
+}
 
-cout << arryFour[i] << "\t" << arryThree[i] << "\t" << arryTwo[i] << "\t" << arryOne[i] << endl;
+//radixsort output
+cout << "radixsort:" << endl;
+for( i = 0; i <= 10; i++ )
+{
+	cout << "\t" << arryTwo[i] << endl;
+}
+
+//STL sort output
+cout << "STL sort:" << endl;
+for( i = 0; i <= 10; i++ )
+{
+	cout << "\t" << arryThree[i] << endl;
+}
+
+//heapsort output
+cout << "heapsort:" << endl;
+for( i = 0; i <= 10; i++ )
+{
+	cout << "\t" << arryFour[i] << endl;
 }
 
 
