@@ -1,5 +1,15 @@
-
-
+/*****************************************************************************
+ *Program: Program 3
+ *Author: Jared Johnson and Christian Sieh
+ *Class: CSC 300, Data Structures
+ *Instructor: Dr. Edward Corwin
+ *Date: 5/1/2015
+ *Description:
+ *Input: Integers from a text file ex: numbers.txt
+ *Output: 
+ *Usage:
+ *Known Bugs:
+ * ***************************************************************************/
 
 #include<iostream>
 #include<fstream>
@@ -235,13 +245,17 @@ while( n != size )
 /*****************************************************************************
  *Function: Heapsort
  *Author: Christian Sieh
- *Description: 
- *Parameters:
+ *Description: This function will do a heapsort on the given array of ints
+ *Parameters: 
+	     int *arry - An array that holds the list of numbers to be sorted
+	     int size - The size of array 'arry'
  * ***************************************************************************/
 void heapsort( int *arry, int size)
 {
+	//
 	for( int i = size / 2 - 1; i >= 0; --i)
 		siftdown(arry, i, size);
+	//
 	for( int j = size - 1; j > 0; --j)
 	{
 		swap( arry[0], arry[j] );
@@ -249,6 +263,7 @@ void heapsort( int *arry, int size)
 	}
 }
 
+//Simple inline function used in siftdown
 inline int leftChild( int i )
 {
 	return 2 * i + 1;
@@ -257,31 +272,28 @@ inline int leftChild( int i )
 
 /*****************************************************************************
  *Function: Siftdown
- *Author:
+ *Author: Christian Sieh
  *Description:
  *Parameters:
+	     int *arry - The array that holds all the numbers to be sorted
+	     int i - The iterator from the function heapsort
+	     int size - The size of the array
  * ***************************************************************************/
-void siftdown(int *arry, int i, int n)
+void siftdown(int *arry, int i, int size)
 {
 	int child;
-	int tmp;
+	int temp;
 	
-	for(tmp = arry[i]; leftChild(i) < n; i = child)
+	//
+	for(temp = arry[i]; leftChild(i) < size; i = child)
 	{
 		child = leftChild(i);
-		if( child != n-1 && arry[child] < arry[child+1])
+		if( child != size-1 && arry[child] < arry[child+1])
 			++child;
-		if(tmp < arry[child])
+		if(temp < arry[child])
 			arry[i] = arry[child];
 		else
 			break;
 	}
-	arry[i] = tmp;
+	arry[i] = temp;
 }
-
-/*****************************************************************************
- *Function: convertBase
- *Author:
- *Description:
- *Parameters:
- * *******/
