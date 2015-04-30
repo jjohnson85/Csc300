@@ -33,8 +33,11 @@ void siftdown( int *arry, int i, int n);
 /*****************************************************************************
  *Function: main
  *Author: Jared Johnson
- *Description:
- *Parameters:
+ *Description: main function calls all other functions and times each one.
+main also handles output to console and opens and closes files using command
+line arguments.
+ *Parameters: <in> int argc - command line argument count
+              <in> char *argv[] - comand line argument string
  * ***************************************************************************/
 int main( int argc, char *argv[] )
 {
@@ -135,9 +138,13 @@ return 0;
 
 /*****************************************************************************
  *Function: radixSort
- *Author: 
- *Description:
- *Parameters:
+ *Author: Jared Johnson
+ *Description: radixSort will sort a list of integers found in the passed array
+by determining a value at each place in the base 256 number, and inserting it
+into a queue. After each pass, it will pop the values from the queue, sorting
+the digits that pass. 
+ *Parameters: <in/out> int *arry - array of values to sort
+              <in> int size - size of the array to sort
  * ***************************************************************************/
 void radixSort( int *arry, int size )
 {
@@ -150,6 +157,7 @@ int maxDigits = 0;
 int max = 0;
 long int stepFactor = 1;
 
+//Create a 256 queue vectors
 radixList.resize(256);
 
 while( step <= maxDigits || maxDigits == 0 )
@@ -209,9 +217,13 @@ while( step <= maxDigits || maxDigits == 0 )
 
 /*****************************************************************************
  *Function: bubbleSort
- *Author:
- *Description:
- *Parameters:
+ *Author: Jared Johnson
+ *Description: sorts an array of integer values using the bubble sort algorithm
+loops though all values in the array and checks if values need to be swapped.
+Does this n times to sort the list. Quits if time taken is greater than 10 
+seconds.
+ *Parameters: <in/out>  int *arry - array to sort
+              <in> int size - size of the array
  * ***************************************************************************/
 void bubbleSort( int *arry, int size )
 {
@@ -221,19 +233,23 @@ int temp = 0;
 time_t start;
 time_t end;
 
-
+//Set start time and begin looping through array
 start = time(NULL);
 while( n != size )
 {
+	//calculate time at end of each pass
+	//if the time taken is greater than 10
+	//cout and return
 	end = time(NULL);
 	if( end - start > 10 )
 	{
 		cout << "Bubble Sort time greater than 10s " << endl;
 		return;
 	}
+	//move through array
 	for( i=0; i < size; i++ )
 	{
-	
+		//Check adjacent value and swap if needed
 		if(arry[i] > arry[i+1])
 		{
 			temp = arry[i];
@@ -242,6 +258,7 @@ while( n != size )
 		}		
 
 	}
+	//increment number of passes
 	n++;
 }
 }
