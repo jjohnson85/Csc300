@@ -47,7 +47,7 @@ int *arryThree;
 int *arryFour;
 clock_t timer;
 int val;
-int i = 1;
+int i = 0;
 int counter = 0;
 ifstream inp;
 ofstream fout;
@@ -79,9 +79,6 @@ inp.close();
 //Reopen file (until I can figure out why I cant seem to seek to the beggining)
 inp.open(argv[1], ios::in);
 
-cout << "Number of values: " << counter << endl;
-cout << inp.tellg( ) << endl;
-
 //allcate arrays of the appropriate size
 arryOne = new int[counter+1];
 arryTwo = new int[counter+1];
@@ -101,28 +98,34 @@ while( inp >> val)
 }
 inp.close();
 
+for(i = 0; i < 10; i++)
+	cout << "Array One: " << arryOne[i] << endl;
 
 //sort list One with bubble sort
 timer = clock();
-bubbleSort(arryOne, counter);
+bubbleSort(arryOne, counter-1);
 timer = clock() - timer;
 cout << "Timer for Bubble Sort: " << ((float)timer)/CLOCKS_PER_SEC << endl;
 
+
+for(i = 0; i < 10; i++)
+	cout << "Array One: " << arryOne[i] << endl;
+
 //sort list Two with radix sort
 timer = clock();
-radixSort(arryTwo, counter+1);
+radixSort(arryTwo, counter);
 timer = clock() - timer;
 cout << "Time for Radix Sort: " << ((float)timer)/CLOCKS_PER_SEC << endl;
 
 //sort list Three with std sort
 timer = clock();
-sort(arryThree, arryThree+counter+1);
+sort(arryThree, arryThree+counter);
 timer = clock() - timer;
 cout << "Timer for STL sort: " << ((float)timer)/CLOCKS_PER_SEC << endl;
 
 //sort list Four with heapsort
 timer = clock();
-heapsort(arryFour, counter+1);
+heapsort(arryFour, counter);
 timer = clock() - timer;
 cout << "Time for Heapsort: " << ((float)timer)/CLOCKS_PER_SEC << endl;
 
