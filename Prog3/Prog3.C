@@ -49,12 +49,14 @@ clock_t timer;
 int val;
 int i = 1;
 int counter = 0;
-fstream inp;
+ifstream inp;
+ofstream fout;
 cout.setf(ios::fixed, ios::floatfield);
 cout.setf(ios::showpoint);
 
 //Open the first argument for input
 inp.open(argv[1], ios::in);
+fout.open(argv[2]);
 
 if( !inp.is_open( ) )
 {
@@ -62,6 +64,11 @@ if( !inp.is_open( ) )
 	return -1;
 }
 
+if( !fout.is_open( ) )
+{
+	cout << "Error opening output file" << endl;
+	return -1;
+}
 //determine the size needed for the arrays
 while(inp >> val)
 {
@@ -84,7 +91,7 @@ arryFour = new int[counter+1];
 //insert values from files into all arrays
 while( inp >> val)
 {
-
+	cout << val << endl;
 	arryOne[i] = val;
 	arryTwo[i] = val;
 	arryThree[i] = val;
@@ -120,31 +127,31 @@ timer = clock() - timer;
 cout << "Time for Heapsort: " << ((float)timer)/CLOCKS_PER_SEC << endl;
 
 //bubblesort output
-cout << "bubblesort:" << endl;
-for( i = 0; i<=10; i++)
+fout << "bubblesort:" << endl;
+for( i = 0; i < 10; i++)
 {
-	cout << "\t" << arryOne[i] << endl;
+	fout << "\t" << arryOne[i] << endl;
 }
 
 //radixsort output
-cout << "radixsort:" << endl;
-for( i = 0; i <= 10; i++ )
+fout << "radixsort:" << endl;
+for( i = 0; i < 10; i++ )
 {
-	cout << "\t" << arryTwo[i] << endl;
+	fout << "\t" << arryTwo[i] << endl;
 }
 
 //STL sort output
-cout << "STL sort:" << endl;
-for( i = 0; i <= 10; i++ )
+fout << "STL sort:" << endl;
+for( i = 0; i < 10; i++ )
 {
-	cout << "\t" << arryThree[i] << endl;
+	fout << "\t" << arryThree[i] << endl;
 }
 
 //heapsort output
-cout << "heapsort:" << endl;
-for( i = 0; i <= 10; i++ )
+fout << "heapsort:" << endl;
+for( i = 0; i < 10; i++ )
 {
-	cout << "\t" << arryFour[i] << endl;
+	fout << "\t" << arryFour[i] << endl;
 }
 
 
