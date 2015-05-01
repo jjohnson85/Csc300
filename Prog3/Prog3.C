@@ -49,6 +49,7 @@ clock_t timer;
 int val;
 int i = 0;
 int counter = 0;
+int spot = 0;
 ifstream inp;
 ofstream fout;
 cout.setf(ios::fixed, ios::floatfield);
@@ -133,28 +134,32 @@ cout << "Time for Heapsort: " << ((float)timer)/CLOCKS_PER_SEC << endl;
 fout << "bubblesort:" << endl;
 for( i = 0; i < 10; i++)
 {
-	fout << "\t" << arryOne[i] << endl;
+	spot = i * (counter/10);
+	fout << "     " << arryOne[spot] << endl;
 }
 
 //radixsort output
 fout << "radixsort:" << endl;
 for( i = 0; i < 10; i++ )
 {
-	fout << "\t" << arryTwo[i] << endl;
+	spot = i * (counter/10);
+	fout << "     " << arryTwo[spot] << endl;
 }
 
 //STL sort output
 fout << "STL sort:" << endl;
 for( i = 0; i < 10; i++ )
 {
-	fout << "\t" << arryThree[i] << endl;
+	spot = i * (counter/10);
+	fout << "     " << arryThree[spot] << endl;
 }
 
 //heapsort output
 fout << "heapsort:" << endl;
 for( i = 0; i < 10; i++ )
 {
-	fout << "\t" << arryFour[i] << endl;
+	spot = i * (counter/10);
+	fout << "     " << arryFour[spot] << endl;
 }
 
 
